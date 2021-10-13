@@ -23,7 +23,7 @@ function Message:displayLines()
     end
 end
 
-function Message.weaveLinestoTrigrams(l1, l2)
+local function weaveLinestoTrigrams(l1, l2)
     local tris = {}
     local iter = 1
 
@@ -36,33 +36,26 @@ function Message.weaveLinestoTrigrams(l1, l2)
             table.insert(tris, tri)
         end
         iter = iter + 1
-    until iter >= (string.len(l1)+string.len(l2)//3)
-
-    for _, value in pairs(tris) do
-        io.write(value..' ')
-    end
+    until iter > ((string.len(l1)+string.len(l2))//3)
+    return tris
 end
 
 function Message:displayTrigrams()
     local tui = require "tui"
-    tui.header(self.name..": Trigrams", 41)
-    local full = self.text:gsub(self.delimiter, '')
-    local allTris = {}
-    local trigramCount = 0
-    local iter = 1
+    local rows = SplitBy(self.text, self.delimiter)
+    tui.header(self.name..": Trigrams", string.len(rows[1]) + 2)
+    local tris = {}
 
-    repeat
-        table.insert(allTris, full:sub(iter,iter+1)..full:sub(iter+39,iter+39))
-        table.insert(allTris, (full:sub(iter+2, iter+2)..full:sub(iter+40, iter+41)):reverse())
-        trigramCount=trigramCount+2
-        if trigramCount % 26 ~= 0 then
-            iter=iter+3
-        elseif trigramCount % 26 == 0 then
-            iter=iter+42
+    -- get two rows at a time. We can assume pairs of rows.
+    for i=1,#rows,2 do
+        local wovenTris = weaveLinestoTrigrams(rows[i], rows[i+1])
+        for _,v in ipairs(wovenTris) do 
+            table.insert(tris, v)
         end
-    until trigramCount >= (string.len(full)//3)
+        
+    end
 
-    for i, value in pairs(allTris) do
+    for i,value in pairs(tris) do
         io.write(value..' ')
         if i % 26 == 0 then
             print()
