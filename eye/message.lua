@@ -14,7 +14,19 @@ function Message:fromEyes(eyes, name)
     return m
 end
 
-function Message:displayLines()
+function Message:display(format)
+    local action = {
+        ["trigram"] = DisplayTrigrams,
+        ["lines"] = DisplayLines,
+        ["pixels"] = DisplayPixels
+    }
+    action[format](self)
+end
+
+function DisplayPixels(self)
+end
+
+function DisplayLines(self)
     local tui = require "tui"
     local rows = SplitBy(self.text, self.delimiter)
     tui.header(self.name..": Lines", string.len(rows[1]) + 2)
@@ -40,7 +52,7 @@ local function weaveLinestoTrigrams(l1, l2)
     return tris
 end
 
-function Message:displayTrigrams()
+function DisplayTrigrams(self)
     local tui = require "tui"
     local rows = SplitBy(self.text, self.delimiter)
     tui.header(self.name..": Trigrams", string.len(rows[1]) + 2)
