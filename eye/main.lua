@@ -67,10 +67,13 @@ function SplitBy (inputstr, sep)
 end
 
 local eyes = LoadJson("eyes.json")
--- local message = require "message"
--- local m = message.from(eyes, "east1")
--- m.displayLines(m)
 local Message = require "message"
-
 local m = Message:fromEyes(eyes, "east1")
-print(m.text)
+m:displayLines()
+m:displayTrigrams()
+
+
+-- incrememnt line 1 by 2, then line 2 by 1
+-- when line 1 is done, jump to line 3
+
+-- 1, 3, 5, and 2, 4, 6
