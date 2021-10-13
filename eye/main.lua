@@ -1,6 +1,8 @@
 require "util"
+require "message"
 
 local eyes = LoadJson("eyes.json")
-local Message = require "message"
-local m = Message:fromEyes(eyes, "east1")
-m:display("lines")
+local m = Message:fromEyes(eyes, arg[1])
+for i=2,#arg do
+    m:display(arg[i])
+end

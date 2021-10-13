@@ -16,7 +16,7 @@ end
 
 function Message:display(format)
     local action = {
-        ["trigram"] = DisplayTrigrams,
+        ["trigrams"] = DisplayTrigrams,
         ["lines"] = DisplayLines,
         ["pixels"] = DisplayPixels
     }
@@ -64,7 +64,6 @@ function DisplayTrigrams(self)
         for _,v in ipairs(wovenTris) do 
             table.insert(tris, v)
         end
-        
     end
 
     for i,value in pairs(tris) do
@@ -73,6 +72,7 @@ function DisplayTrigrams(self)
             print()
         end
     end
+    print()
 end
 
 return Message
