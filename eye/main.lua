@@ -20,16 +20,22 @@ function DisplayMessageTrigram(eyes)
     end
 end
 
-function DisplayMessageLines(eyes)
+function DisplayMessagesLines(eyes)
     local delimiter = eyes["delimiter"]
     local messages = eyes["messages"]
     for key, value in pairs(messages) do
-        local rows = SplitBy(value, delimiter)
-        print(key .. ":")
-        for _,row in ipairs(rows) do
-            print(row)
-        end
-        print()
+        DisplayMessageLines(value, delimiter)
+    end
+end
+
+function DisplayMessageTrigrams(message, delimiter)
+
+end
+
+function DisplayMessageLines(message, delimiter)
+    local rows = SplitBy(message, delimiter)
+    for _,row in ipairs(rows) do
+        print(row)
     end
 end
 
@@ -39,23 +45,32 @@ end
 function DisplayEyes(eyes, format)
     local action = {
         ["trigram"] = DisplayMessageTrigram,
-        ["lines"] = DisplayMessageLines,
+        ["lines"] = DisplayMessagesLines,
         ["pixels"] = displayMessagePixels
     }
     action[format](eyes)
 end
 
+function CountEyes(eyes)
+    local delimiter = eyes["deliimiter"]
+end
+
 function SplitBy (inputstr, sep)
     if sep == nil then
-            sep = "%s"
+        sep = "%s"
     end
     local t={}
     for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-            table.insert(t, str)
+        table.insert(t, str)
     end
     return t
 end
 
-
 local eyes = LoadJson("eyes.json")
-DisplayEyes(eyes, "lines")
+-- local message = require "message"
+-- local m = message.from(eyes, "east1")
+-- m.displayLines(m)
+local Message = require "message"
+
+local m = Message:fromEyes(eyes, "east1")
+print(m.text)
