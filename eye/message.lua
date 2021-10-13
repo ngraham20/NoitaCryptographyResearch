@@ -23,6 +23,26 @@ function Message:displayLines()
     end
 end
 
+function Message.weaveLinestoTrigrams(l1, l2)
+    local tris = {}
+    local iter = 1
+
+    repeat
+        local tri = l1:sub(iter+(iter//2),iter+((iter+1)//2))..l2:sub(iter+((iter-1)//2), iter+(iter//2))
+
+        if iter % 2 == 0 then
+            table.insert(tris, string.reverse(tri))
+        else
+            table.insert(tris, tri)
+        end
+        iter = iter + 1
+    until iter >= (string.len(l1)+string.len(l2)//3)
+
+    for _, value in pairs(tris) do
+        io.write(value..' ')
+    end
+end
+
 function Message:displayTrigrams()
     local tui = require "tui"
     tui.header(self.name..": Trigrams", 41)
@@ -30,14 +50,7 @@ function Message:displayTrigrams()
     local allTris = {}
     local trigramCount = 0
     local iter = 1
-    -- 26 trigrams per row
 
-    -- TODO : This breaks because it "skips ahead" the expected line length.
-    -- The last few lines are too short, so it skips too far.
-    -- Probably, it will be easier to skip to the next desired delimiter instead of removing it
-
-    -- maybe make a "weave" function that takes two lines and weaves them together in trigrams
-    -- keep in account that it could end on an odd trigram
     repeat
         table.insert(allTris, full:sub(iter,iter+1)..full:sub(iter+39,iter+39))
         table.insert(allTris, (full:sub(iter+2, iter+2)..full:sub(iter+40, iter+41)):reverse())

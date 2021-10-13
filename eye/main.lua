@@ -70,7 +70,7 @@ local eyes = LoadJson("eyes.json")
 local Message = require "message"
 local m = Message:fromEyes(eyes, "east1")
 m:displayLines()
-m:displayTrigrams()
+m.weaveLinestoTrigrams("201013223304041130232114313033004024000","032041220001422242122220110003201341113")
 
 
 -- incrememnt line 1 by 2, then line 2 by 1
