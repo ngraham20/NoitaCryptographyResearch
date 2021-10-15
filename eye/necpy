@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from message import Message
+from ui import UI
 import json
 
 def main():
@@ -7,6 +8,8 @@ def main():
     eyes=json.load(f)
     f.close()
     m = Message.from_eyes(eyes, "east1")
+
+    UI.program_header()
     m.display("lines")
     m.display("trigrams","ascii")
 
