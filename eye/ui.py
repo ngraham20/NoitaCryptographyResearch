@@ -1,6 +1,7 @@
 import constants
 import argparse
 import json
+import sys
 
 class UI:
     size=41
@@ -9,7 +10,11 @@ class UI:
     def parse_args():
         parser = argparse.ArgumentParser(description="Run various cryptographic algorithms against the Eyes Messages from Noita.")
         parser.add_argument('-m',action='append',nargs=2,metavar=('message','style'))
-        return parser.parse_args()
+        eyeargs = parser.parse_args()
+        if eyeargs.m is None:
+            parser.print_help()
+            sys.exit(2)
+        return eyeargs
     @staticmethod
     def program_header(conf=None, size=None):
         conf = conf or UI.conf

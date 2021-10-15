@@ -3,6 +3,7 @@
 from message import Message
 from ui import UI
 import json
+from wheel import Wheel
 
 def main():
     f = open('eyes.json')
@@ -11,8 +12,7 @@ def main():
 
     UI.program_header()
     ea = UI.parse_args()
-    # m = Message.from_eyes(eyes, eyeargs.MESSAGE)
-    # m.display("trigrams","runic")
+
     for message in ea.m:
         style = None
         fmt = None
@@ -30,8 +30,6 @@ def main():
             elif message[1][1] == 'b':
                 fmt = "base10"
         Message.from_eyes(eyes, message[0]).display(style, fmt)
-
-
 
 if __name__ == "__main__":
     main()

@@ -79,3 +79,13 @@ Notice that there is no West 5. The reason for this is unknown, however it is sp
 ## What has been tried
 This is an incomplete list. If a theory has been tested, please add it here. See [Contributing](./CONTRIBUTING.md) for information on how to update this.
 
+Going forward, we will assume that these ciphers have been tried on the **trigrams**, since we're assuming that the trigrams are the correct way to begin reading the messages.
+
+### Simple Substitution Cipher
+Frequency analysis has been tried on the trigrams, with no workable results, indicating that simple substition isn't the answer.
+
+### Wheel Ciphers
+This is being currently explored. The idea here is that you can have one or more wheels inside each other. There are many ways that wheels can interact.
+   1. If they're the same size
+        a. Simple substitution cipher (debunked most likely, see above)
+        b. Incrementing cipher, where the outer ring has the 83 glyphs, and the inner ring has the plaintext with gaps. Each time you encode a plaintext character to a glyph, rotate the ring one position.
