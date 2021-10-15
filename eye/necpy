@@ -21,8 +21,10 @@ def main():
         elif message[1][0] == 'l':
             style = "lines"
         if len(message[1]) > 1:
-            if message[1][1] == 'a':
+            if message[1][1] == 's':
                 fmt = "ascii"
+            elif message[1][1] == 'a':
+                fmt = "alchemic"
             elif message[1][1] == 'r':
                 fmt = "runic"
             elif message[1][1] == 'b':

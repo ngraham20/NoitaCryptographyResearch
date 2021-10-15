@@ -47,6 +47,8 @@ class Message:
                 print(chr(btennum+32), end='')
             elif style == "runic":
                 print(chr(btennum+5792), end='')
+            elif style == "alchemic":
+                print(chr(btennum+128768), end='')
             if (i+1) % 26 == 0:
                 print()
         print()
