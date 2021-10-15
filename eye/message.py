@@ -27,10 +27,11 @@ class Message:
         for row in rows:
             print(row)
 
-    def _display_trigrams(self, style):
+    def _display_trigrams(self, style=None):
+        style = style or "plain"
         rows = [x for x in self.text.split('5') if x]
         tris = []
-        UI.header(self.name + ": Trigrams")
+        UI.header(self.name + ": Trigrams (" + style + ")")
         for i in range(0, len(rows), 2):
             woven_tris = Message._weave_lines_to_trigrams(rows[i], rows[i+1])
             for tri in woven_tris:
