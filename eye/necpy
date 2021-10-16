@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from message import Message
-from ui import UI
 import json
+from ui import UI
 
 def main():
     f = open('eyes.json')
@@ -11,27 +10,7 @@ def main():
 
     UI.program_header()
     ea = UI.parse_args()
-    # m = Message.from_eyes(eyes, eyeargs.MESSAGE)
-    # m.display("trigrams","runic")
-    for message in ea.m:
-        style = None
-        fmt = None
-        if message[1][0] == 't':
-            style = "trigrams"
-        elif message[1][0] == 'l':
-            style = "lines"
-        if len(message[1]) > 1:
-            if message[1][1] == 's':
-                fmt = "ascii"
-            elif message[1][1] == 'a':
-                fmt = "alchemic"
-            elif message[1][1] == 'r':
-                fmt = "runic"
-            elif message[1][1] == 'b':
-                fmt = "base10"
-        Message.from_eyes(eyes, message[0]).display(style, fmt)
-
-
+    UI.handle_args(eyes, ea)
 
 if __name__ == "__main__":
     main()
