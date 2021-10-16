@@ -3,6 +3,7 @@ import argparse
 import json
 import sys
 from message import Message
+from wheelcipher import (Wheel, WheelCipher)
 
 class UI:
     size=41
@@ -11,7 +12,7 @@ class UI:
     @staticmethod
     def parse_args():
         parser = argparse.ArgumentParser(description="Run various cryptographic algorithms against the Eyes Messages from Noita.")
-        subparsers = parser.add_subparsers(required=True)
+        subparsers = parser.add_subparsers(required=True, dest='eyemodule')
 
         # ----- MESSAGE PARSING -----
         messageparser = subparsers.add_parser('message')
@@ -19,12 +20,12 @@ class UI:
 
         # ----- CIPHER PARSING -----
         cipherparser = subparsers.add_parser('cipher')
-        subciphers = cipherparser.add_subparsers(required=True)
+        subciphers = cipherparser.add_subparsers(required=True, dest='ciphermodule')
 
         # ---------- WHEEL CIPHER -----
         wheelparser = subciphers.add_parser('wheel')
         wheelparser.add_argument('-c', '--cipher', required=True, choices=['alberti'])
-        wheelparser.add_argument('-w', action='append', nargs='+', metavar='wheels', help='add wheels to the cipher')
+        wheelparser.add_argument('-w', nargs='+', metavar='wheels', help='add wheels to the cipher')
 
         eyeargs = vars(parser.parse_args())
         trueargs = {k: v for k, v in eyeargs.items() if v is not None}
@@ -35,7 +36,7 @@ class UI:
     
     @staticmethod
     def handle_args(eyes, data):
-        if 'm' in data:
+        if data["eyemodule"] == "message":
             for message in data['m']:
                 fmt = None
                 style = None
@@ -52,7 +53,17 @@ class UI:
                         style = "runic"
                     elif message[1][1] == 'd':
                         style = "decimal"
-                print(Message.from_eyes(eyes, message[0]).as_panel(41, fmt, style))
+                print(Message.from_eyes(eyes, message[0]).as_panel(UI.size, fmt, style))
+        elif data["eyemodule"] == "cipher":
+            wheels = []
+            for wheel in data['w']:
+                wheels.append(Wheel(wheel))
+            wc = WheelCipher(wheels)
+            for i in range(65):
+                print("step: " + str(i))
+                print(wc.as_panel(UI.size))
+                WheelCipher.advance_wheel(wheels, Wheel.Direction.CLOCKWISE)
+        
 
     @staticmethod
     def program_header(conf=None, size=None):

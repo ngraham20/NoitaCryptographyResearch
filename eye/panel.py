@@ -41,7 +41,9 @@ class Panel:
             lines.append(self._centerstring(self.title))
             lines.append(self._bar())
         for line in self.data:
-            lines.append(' '*self.inset + line)
+            # if type(line) != str:
+            #     line = str(line)
+            lines.append(' '*self.inset + str(line))
         lines.append(self._bar())
         return lines
 

@@ -2,9 +2,6 @@
 
 import json
 from ui import UI
-# from message import Message
-from wheelcipher import (Wheel, WheelCipher)
-from panel import Panel
 
 def main():
     f = open('eyes.json')
@@ -14,26 +11,6 @@ def main():
     UI.program_header()
     ea = UI.parse_args()
     UI.handle_args(eyes, ea)
-
-    # w1 = Wheel("abcd")
-    # w2 = Wheel("efgh")
-    # w3 = Wheel("ijkl")
-    # ws = [w1, w2, w3]
-    # for i in range(65):
-    #     print("------------------")
-    #     print("step: " + str(i))
-    #     print(w1.data)
-    #     print(w2.data)
-    #     print(w3.data)
-    #     print("------------------")
-    #     WheelCipher.advance_wheel(ws, Wheel.Direction.CLOCKWISE)
-
-    # title = "TITLE"
-    # size = 10
-    # text = ["abcd","efgh","ijkl","mnop"]
-    # inset = 1
-    # p = Panel(text, size, inset, title)
-    # print(p)
 
 if __name__ == "__main__":
     main()

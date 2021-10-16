@@ -71,12 +71,6 @@ class Message:
         
         title = self.name + ": Trigrams (" + style + ")"
         return Panel(datarows, size, 1, title)
-
-        # for i, tri in enumerate(tris):
-        #     print(tri+' ', end='')
-        #     if (i+1) % 26 == 0:
-        #         print()
-        # print()
     
     @staticmethod
     def _weave_lines_to_trigrams(l1, l2):

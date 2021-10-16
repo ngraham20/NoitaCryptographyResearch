@@ -1,5 +1,6 @@
 from enum import Enum
 from cipher import Cipher
+from panel import Panel
 
 class WheelCipher(Cipher):
     def __init__(self, wheels, reflector=False):
@@ -10,6 +11,9 @@ class WheelCipher(Cipher):
         """
         self.wheels = wheels
         self.reflector = reflector
+
+    def as_panel(self, size):
+        return Panel(self.wheels, size, 1)
     
     @staticmethod
     def advance_wheel(wheels, direction):
