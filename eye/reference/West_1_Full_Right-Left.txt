@@ -1,0 +1,135 @@
+Ethan -Grp A-Sec 61-FT-aka Sea
+
+-Sea 
+
+ Message 1 (West 1) Line 1
+	      \3 1/	 /1\ 	\0 1/	  /3\ 	\2 2/	 /3\ 	\3 0/	  /4\ 	\0 4/ 	 /1\ 	\1 3/ 	 /0\ 	\2 3/ 	 /2\ 	\1 1/ 	 /4\ 	\3 1/ 	 /3\ 	\0 3/ 	 /3\ 	\0 0/    /4\ 	\0 2/	 /4\ 	\0 0/ 	 /4\ 5
+ 	       \0/ 	/3 2\	 \0/	 /4 1\	 \2/ 	/2 0\ 	 \0/	 /0 1\ 	 \4/ 	/2 2\ 	 \2/ 	/4 2\ 	 \1/ 	/2 2\ 	 \2/ 	/2 0\ 	 \1/ 	/1 0\	 \0/ 	/0 3\ 	 \2/    /0 1\ 	 \3/ 	/4 1\ 	 \1/ 	/0 1\ 5
+
+
+  Left-Right:  301	 312	 001	  431  	 222  	 230	 300	  041	 044	 212	 123	 402	 213  	 222	 121	 240 	 311 	 130	003	 033	 020	 041	 032	 441     010	 041
+  
+  Left-Right:  301 312 001 431 222 230 300 041 044 212 123 402 213 222 121 240 311 130 003 033 020 041 032 441 010 041
+
+
+ Message 1 (West 1) Line 2
+ 	      \0 2/     /0\ 	\2 0/	 /1\	 \0 4/	 /4\ 	\0 0/ 	 /0\ 	\1 0/	  /4\	 \0 4/	  /4\	 \0 4/ 	 /0\ 	\1 4/ 	 /4\ 	\1 4/ 	 /2\ 	\0 3/ 	 /3\ 	\0 2/	  /2\	 \0 3/	  /4\	 \1 3/	  /1\ 5
+  	       \1/     /1 1\	 \2/ 	/1 3\	  \1/ 	/3 0\	 \0/ 	/0 1\ 	 \1/	 /0 2\	  \0/	 /2 0\	  \1/ 	/4 2\ 	 \2/ 	/3 1\ 	 \3/ 	/3 1\ 	 \4/ 	/4 1\ 	 \3/	 /4 1\	  \4/	 /4 1\	  \4/	 /0 1\ 5
+
+
+  Left-Right:  012 	101	 220 	 113	  014	 340	 000	 001	 101	  042	  004	  240	  014	 402	 124	 341 	 134	 321	 043	 431	 032	  421	  043	  441	  143	  011
+ 
+  Left-Right: 012 101 220 113 014 340 000 001 101 042 004 240 014 402 124 341 134 321 043 431 032 421 043 441 143 011
+ 
+
+ Message 1 (West 1) Line 3
+	      \2 1/	 /2\	\2 2/ 	 /3\ 	\3 0/	 /3\ 	\2 4/	 /4\ 	\0 0/	 /0\ 	\2 4/	 /3\ 	\2 3/	 /1\ 	\1 1/	 /0\ 	\2 2/	 /1\ 	\2 3/	 /1\ 	\0 3/	 /1\ 	\0 2/	 /2\ 	\0 4/	 /3\ 5
+	       \4/ 	/0 3\	 \4/ 	/3 1\ 	 \4/ 	/0 1\	 \2/ 	/2 2\	 \1/ 	/1 1\	 \3/ 	/4 0\	 \2/ 	/1 0\	 \3/ 	/0 1\	 \4/ 	/1 3\	 \3/ 	/4 1\	 \2/ 	/2 1\	 \3/ 	/3 0\	 \1/ 	/3 2\ 5
+
+
+  Left-Right:  241	 023	 242	 331	 340	 031	 224	 242	 010	 101	 234	 430	 223	 110	 131	 001	 242	 113	 233	 411	 023	 211	 032	 320	 014	 332
+
+  Left-Right: 241 023 242 331 340 031 224 242 010 101 234 430 223 110 131 001 242 113 233 411 023 211 032 320 014 332
+
+
+Message 1 (West 1) Line 4
+	     \0 2/	 /4\ 	\1 4/	 /2\ 	\2 1/	 /4\ 	\2 2/	 /2\ 	\0 3/	 /0\ 	\2 4/	 /2\ 	\0 0/	 /1\ 	\2 3/	 /2\ 	\1 2/	 /4\ 	\0 2/	 /3\ 	\2 3/	 /2\ 	\0 1/	 /4\ 	\0 3/ 5
+              \3/ 	/1 0\	 \1/ 	/3 2\	 \2/ 	/1 1\	 \2/ 	/1 3\	 \0/ 	/2 0\	 \3/ 	/2 2\	 \2/ 	/2 0\	 \0/ 	/4 2\	 \2/ 	/3 1\	 \0/ 	/3 1\	 \3/ 	/2 2\	 \4/ 	/1 1\	 \3/ 5
+
+
+  Left-Right: 032	 140	 114	 322	 221	 141	 222	 123	 003	 200	 234	 222	 020	 210	 203	 422	 122	 341	 002	 331	 233	 222	 041	 141	 033
+ 
+  Left-Right: 032 140 114 322 221 141 222 123 003 200 234 222 020 210 203 422 122 341 002 331 233 222 041 141 033
+
+
+
+ Message 1 (West 1) Left to Right
+   Full Poem: 301 312 001 431 222 230 300 041 044 212 123 402 213 222 121 240 311 130 003 033 020 041 032 441 010 041
+	      012 101 220 113 014 340 000 001 101 042 004 240 014 402 124 341 134 321 043 431 032 421 043 441 143 011
+	      241 023 242 331 340 031 224 242 010 101 234 430 223 110 131 001 242 113 233 411 023 211 032 320 014 332
+	      032 140 114 322 221 141 222 123 003 200 234 222 020 210 203 422 122 341 002 331 233 222 041 141 033   
+
+	
+
+
+	 -- Welcome to crazy town --
+
+I will now use my numbers, from my trigram read order of left to right along with this gematria calculator in 
+an attempt to generate cryptic messages. I do not expect this attempt to produce anything significant, however
+I hope that anyone reading this has some fun with it. And, now... It's f*cking Gematria time!
+
+https://www.gematrix.org/
+
+
+301			312 			001	431			222			230			300			041		044		212			123			402				213			222
+
+
+1			2			3	4			5			6			7			8		9		10			11			12				13			14
+	
+I apologise		Records			A	Gods a human		I am dragon		Planted			Stop			All		Child		Gods god		A gift			So it begins			Marriage		same as 5
+Such			Holiness			May			I the magician		Fake deaths		Found			An		Can		Heracles		Be a leader		No need to be afraid		The magician
+Hello there		At last				Best friends		And he openened		An arm and a leg	Peaceful		I am a		Call		Embers			Obedience		The original angel		Shift
+The man of god		Liquid				Cycle			Im sacred		An image of gold	Post			A life		A game		Gifts			Egg seed		Genetic deletion		Grace of god
+Gods kingdom		Raise the dead			Golden rule		Erase all		King of hades		The fallen one		Made a				I need a miracle	Heated			Carbon rings			Peace of mind
+Terrible		Im not kidding			Original pilgrim	Black obelisk		Harbored		Direction						The ocean		Regalia			Heinous				Preaching
+Smart			Of the hands			King and queen		And he opened		The grail		Blindness						Biblical snake		Candle magic		Intercept			No hope
+The bread of life	Armageddon			Arranged marriage	Abominable ego		He is death		Agnostic						God forbid		In peace		Right there			Gods code
+Fuse			Sacred chamber			Rosebud			Forming			And mean it		Spot							Cold blooded		All i did he did hide	Predestined			The fire
+I beat them all		Good neighbor			Change is in order	A school		Stifle			Pull							Get rich		lab fire		Little black book		Chaos god
+Farsight		Druggie				Sacrifice of children	Entangled		Good lion		Flesh and blood						All for me		Big ending		Gentleness			An idiot
+The black flames	Tithes				Rottening		All in the egg		Korean child		To go home						The ion			Behold lie		Because im nice			Flammable gas
+Gods been here		Behold gold be of olde		Sleeping spell		Gardener		The god of		See global fire						Is the			I am mind		No end in sight			The rich
+Blue nile		I am a star			Black terror		Cool and calm		A god himself		Fiendish demon						March on		He had a belief in	Liquids				He is a magician
+The god of man		Lies in sin			God made chocolates  	Armageddon		God made flesh		Left path						To a god					Hater of all good		Alchemical fish
+Clean bum		A good father			Burning hell		Liberate		Golden seed		Digging for gold					Like heals like					All stars			King horus
+																							I am silence					I am the dark lord		See the
+																							God of dark					The great sea			I need to
+		
+
+
+
+222			121			240			311			130		003			033		020
+
+14			15			16			17			18		19			20		21
+
+-same as 5-		Plan			Gods race		God of earth		Delta		-end paragraph?-	Gale		Chi
+			Self			Oasis			The beast		Flies					Lid		Dig	
+			Addict			Hermetic		Portal			Look					Bam		Feed
+			Magic man		Poor			Palantir		Fight					Die if		Faded
+			Begin again		Billions		Heart of god		A demon					Chick		Caged
+			A dream			Spread			Infinite rage		Plain					A dead head	A beach
+			I am gold		Anoint			Created panic		Good idea				A high
+			Land of			Fire bombing		Good people		Non					Did back
+			Caged animal		All of them		Blessed one		Defeated
+			As lead			Bad luck		No no no all		Addicted
+			Kill a god		All at once		Frightening		Marked
+			A god kin		Im telling		Borders			I am alpha
+			A circle		Light of life		Not self		Embraced
+			He did as		Pairs			Son of men		Good egg
+			I am all i am		The god king		The created		Dear life
+			Can i be god		The high one		The ancient		Arcane
+																							
+	
+																											
+
+
+Compiled and Semi-Coherant:
+
+God's kingdom lies in sin. All in the egg, an arm and a leg, digging for gold all a game. All for me, I am mind, I am the dark lord, chaos god,
+I am dragon. Begin again, poor blessed one defeated.
+
+I apologise, at last a change is in order. Liberate an image of gold, flesh, and blood. All can god forbid, behold, Lie	right there, see the abominable ego, 
+Erase all. I am all i am, all at once, the ancient arcane.
+
+
+I beat them all, a good father, A king and queen, Abominable ego, king of hades, the fallen one; made a child to a god, a leader. No need to be afraid king horus, gardener.
+
+Terrible druggie, a rottening, entangled king of hades, The fallen one, I am a child. I need a miracle, a gift. No end in sight, no hope
+
+Fuse at last a king and queen, forming The grail. Flesh and blood, all can get rich. In peace, predestined marriage forming 
+
+Hello there Melinda Gates a rosebud cool and calm
+
+
+
+			

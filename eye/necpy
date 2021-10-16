@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from message import Message
-from ui import UI
 import json
-from wheel import Wheel
+from ui import UI
+# from message import Message
+from wheelcipher import (Wheel, WheelCipher)
+from panel import Panel
 
 def main():
     f = open('eyes.json')
@@ -12,24 +13,27 @@ def main():
 
     UI.program_header()
     ea = UI.parse_args()
+    UI.handle_args(eyes, ea)
 
-    for message in ea.m:
-        style = None
-        fmt = None
-        if message[1][0] == 't':
-            style = "trigrams"
-        elif message[1][0] == 'l':
-            style = "lines"
-        if len(message[1]) > 1:
-            if message[1][1] == 's':
-                fmt = "ascii"
-            elif message[1][1] == 'a':
-                fmt = "alchemic"
-            elif message[1][1] == 'r':
-                fmt = "runic"
-            elif message[1][1] == 'b':
-                fmt = "base10"
-        Message.from_eyes(eyes, message[0]).display(style, fmt)
+    # w1 = Wheel("abcd")
+    # w2 = Wheel("efgh")
+    # w3 = Wheel("ijkl")
+    # ws = [w1, w2, w3]
+    # for i in range(65):
+    #     print("------------------")
+    #     print("step: " + str(i))
+    #     print(w1.data)
+    #     print(w2.data)
+    #     print(w3.data)
+    #     print("------------------")
+    #     WheelCipher.advance_wheel(ws, Wheel.Direction.CLOCKWISE)
+
+    # title = "TITLE"
+    # size = 10
+    # text = ["abcd","efgh","ijkl","mnop"]
+    # inset = 1
+    # p = Panel(text, size, inset, title)
+    # print(p)
 
 if __name__ == "__main__":
     main()
