@@ -2,6 +2,39 @@
 
 import json
 from ui import UI
+from message import Message
+from subcipher import SubCipher
+from wheel import Wheel
+
+def handle_args(eyes, data):
+        if data["eyemodule"] == "message":
+            for message in data['m']:
+                fmt = None
+                style = None
+                if message[1][0] == 't':
+                    fmt = "trigrams"
+                elif message[1][0] == 'l':
+                    fmt = "lines"
+                if len(message[1]) > 1:
+                    if message[1][1] == 's':
+                        style = "ascii"
+                    elif message[1][1] == 'a':
+                        style = "alchemic"
+                    elif message[1][1] == 'r':
+                        style = "runic"
+                    elif message[1][1] == 'd':
+                        style = "decimal"
+                print(Message.from_eyes(eyes, message[0]).as_panel(UI.size, fmt, style))
+        elif data["eyemodule"] == "cipher":
+            if data["ciphermodule"] == "wheel":
+                wheels = []
+                for wheel in data['w']:
+                    wheels.append(Wheel(wheel))
+                sc = SubCipher(wheels)
+                for i in range(65):
+                    print("step: " + str(i))
+                    print(sc.as_panel(UI.size))
+                    SubCipher.advance_wheel(wheels, Wheel.Direction.CLOCKWISE)
 
 def main():
     f = open('eyes.json')
@@ -10,7 +43,8 @@ def main():
 
     UI.program_header()
     ea = UI.parse_args()
-    UI.handle_args(eyes, ea)
+    handle_args(eyes, ea)
+    print(ea)
 
 if __name__ == "__main__":
     main()
