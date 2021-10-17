@@ -5,36 +5,50 @@ from ui import UI
 from message import Message
 from subcipher import SubCipher
 from wheel import Wheel
+from panel import Panel
 
 def handle_args(eyes, data):
-        if data["eyemodule"] == "message":
-            for message in data['m']:
-                fmt = None
-                style = None
-                if message[1][0] == 't':
-                    fmt = "trigrams"
-                elif message[1][0] == 'l':
-                    fmt = "lines"
-                if len(message[1]) > 1:
-                    if message[1][1] == 's':
-                        style = "ascii"
-                    elif message[1][1] == 'a':
-                        style = "alchemic"
-                    elif message[1][1] == 'r':
-                        style = "runic"
-                    elif message[1][1] == 'd':
-                        style = "decimal"
-                print(Message.from_eyes(eyes, message[0]).as_panel(UI.size, fmt, style))
-        elif data["eyemodule"] == "cipher":
-            if data["ciphermodule"] == "wheel":
-                wheels = []
-                for wheel in data['w']:
-                    wheels.append(Wheel(wheel))
-                sc = SubCipher(wheels)
-                for i in range(65):
-                    print("step: " + str(i))
-                    print(sc.as_panel(UI.size))
-                    SubCipher.advance_wheel(wheels, Wheel.Direction.CLOCKWISE)
+    history = [] if "history" in data else None
+
+    if data["eyemodule"] == "message":
+        for message in data['m']:
+            fmt = None
+            style = None
+            if message[1][0] == 't':
+                fmt = "trigrams"
+            elif message[1][0] == 'l':
+                fmt = "lines"
+            if len(message[1]) > 1:
+                if message[1][1] == 's':
+                    style = "ascii"
+                elif message[1][1] == 'a':
+                    style = "alchemic"
+                elif message[1][1] == 'r':
+                    style = "runic"
+                elif message[1][1] == 'd':
+                    style = "decimal"
+            print(Message.from_eyes(eyes, message[0]).as_panel(UI.size, fmt, style))
+    elif data["eyemodule"] == "cipher":
+        origin = data["origin"] if "origin" in data else None
+        ciphernodes = [origin] if origin else []
+        wheelgroups = data['w'] if 'w' in data else None
+        current_wheelgroup = 0
+        ciphers = data['ciphers'] if 'ciphers' in data else []
+        # Describe what will happen during cipher step
+        modulepaneldata = ["Cipher " + str(i+1) + ": " + x for i,x in enumerate(ciphers)]
+        print(Panel(modulepaneldata, UI.size,1,"Encryption Order"))
+        for ciphername in ciphers:
+            if ciphername == "substitution":
+                # wow! using map with a constructor actually works!
+                wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
+                current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
+                cipher = SubCipher(wheels)
+            ciphernodes.append(cipher.encode(ciphernodes[-1], history))
+        cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
+        print(Panel(cipherpaneldata,UI.size,1,"Cipher Nodes"))
+        resultpaneldata =  ["Plaintext:      " + origin]
+        resultpaneldata += ["Ciphertext:     " + ciphernodes[-1]]
+        print(Panel(resultpaneldata,UI.size,1,None,"Results"))
 
 def main():
     f = open('eyes.json')
@@ -44,7 +58,6 @@ def main():
     UI.program_header()
     ea = UI.parse_args()
     handle_args(eyes, ea)
-    print(ea)
 
 if __name__ == "__main__":
     main()

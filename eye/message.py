@@ -43,7 +43,7 @@ class Message:
         elif style == "alchemic":
             tris = map(Message._dec_to_alchemic, tris)
 
-        return list(tris)
+        return list(map(str, list(tris)))
 
     def as_panel(self, size, fmt, style=None):
         if fmt == "trigrams":
