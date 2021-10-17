@@ -18,14 +18,15 @@ class UI:
 
         # ----- CIPHER PARSING -----
         cipherparser = subparsers.add_parser('cipher')
-        subciphers = cipherparser.add_subparsers(required=True, dest='ciphermodule')
-        cipherparser.add_argument('-e', '--encrypt', help='encrypt specified plaintext')
-        cipherparser.add_argument('-d', '--decrypt', help='decrypt specified ciphertext')
+        endecrypt = cipherparser.add_mutually_exclusive_group()
+        endecrypt.add_argument('-e', '--encrypt', metavar='PLAINTEXT', dest='origin', help='encrypt specified plaintext')
+        endecrypt.add_argument('-d', '--decrypt', metavar='CIPHERTEXT', dest='origin', help='decrypt specified ciphertext')
+        cipherparser.add_argument('--history', action='store_true', help='store and display (en/de)cryption history')
 
         # ---------- WHEEL CIPHER -----
-        wheelparser = subciphers.add_parser('wheel')
-        wheelparser.add_argument('-c', '--cipher', required=True, choices=['alberti', 'substitution'])
-        wheelparser.add_argument('-w', nargs='+', metavar='wheels', help='add wheels to the cipher')
+        # wheelparser = subciphers.add_parser('wheel')
+        cipherparser.add_argument('-c', '--ciphers', action='append', required=True, choices=['alberti', 'substitution'])
+        cipherparser.add_argument('-w', action='append', nargs='+', metavar='wheels', help='add wheels to the cipher')
 
         eyeargs = vars(parser.parse_args())
         trueargs = {k: v for k, v in eyeargs.items() if v is not None}

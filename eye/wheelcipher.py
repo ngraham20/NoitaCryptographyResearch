@@ -15,10 +15,9 @@ class WheelCipher(Cipher):
         return Panel(self.wheels, size, 1)
     
     @staticmethod
-    def advance_wheel(wheels, direction):
+    def advance_wheels(wheels, direction):
         """
         BUG: if you rotate once forward, then once back, the next wheel will rotate backwards due to the index being 0 again
-        TODO: add a flag allowing wheels to spin freely
         """
         if len(wheels) == 0:
             return
@@ -28,4 +27,4 @@ class WheelCipher(Cipher):
         # if the fromwheel has gone all the way around, advance the next wheel by one position (recursively)
         # the towheel will become the advancing wheel during this recurse
         if wheels[0].radial_position == 0:
-            WheelCipher.advance_wheel(wheels[1:], direction)
+            WheelCipher.advance_wheels(wheels[1:], direction)

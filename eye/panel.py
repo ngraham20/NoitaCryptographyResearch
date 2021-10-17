@@ -24,11 +24,12 @@ class Panel:
     modules should have a to_panel(self) method, and the UI should simply print panels.
     """
 
-    def __init__(self, data, size, inset=1, title=None):
+    def __init__(self, data, size, inset=1, title=None, subtitle=None):
         self.data = data
         self.size = size
         self.inset = inset
         self.title = title
+        self.subtitle = subtitle
         self.datalines = self._generate_lines()
     
     def __str__(self):
@@ -36,13 +37,13 @@ class Panel:
 
     def _generate_lines(self):
         lines = []
-        lines.append(self._bar())
         if self.title:
-            lines.append(self._centerstring(self.title))
             lines.append(self._bar())
+            lines.append(self._centerstring(self.title))
+        if self.subtitle:
+            lines.append(' '*self.inset + self.subtitle)
+        lines.append(self._bar())
         for line in self.data:
-            # if type(line) != str:
-            #     line = str(line)
             lines.append(' '*self.inset + str(line))
         lines.append(self._bar())
         return lines
