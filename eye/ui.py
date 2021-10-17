@@ -47,8 +47,6 @@ class UI:
         print('─'*size)
         for segment in constants.EYE:
             print(' '*((size-len(segment))//2) + segment)
-        print('─'*size)
-
 
     @staticmethod
     def header(header, size=None):

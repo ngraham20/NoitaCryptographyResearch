@@ -34,14 +34,21 @@ def handle_args(eyes, data):
         wheelgroups = data['w'] if 'w' in data else None
         current_wheelgroup = 0
         ciphers = data['ciphers'] if 'ciphers' in data else []
+        # Describe what will happen during cipher step
+        modulepaneldata = ["Cipher " + str(i+1) + ": " + x for i,x in enumerate(ciphers)]
+        print(Panel(modulepaneldata, UI.size,1,"Encryption Order"))
         for ciphername in ciphers:
             if ciphername == "substitution":
                 # wow! using map with a constructor actually works!
                 wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
                 current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
                 cipher = SubCipher(wheels)
-            ciphernodes.append(cipher.encode(ciphernodes[-1], history))        
-        print(Panel(ciphernodes,UI.size,1,"Cipher Nodes"))
+            ciphernodes.append(cipher.encode(ciphernodes[-1], history))
+        cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
+        print(Panel(cipherpaneldata,UI.size,1,"Cipher Nodes"))
+        resultpaneldata =  ["Plaintext:      " + origin]
+        resultpaneldata += ["Ciphertext:     " + ciphernodes[-1]]
+        print(Panel(resultpaneldata,UI.size,1,None,"Results"))
 
 def main():
     f = open('eyes.json')
