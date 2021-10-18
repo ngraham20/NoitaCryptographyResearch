@@ -53,8 +53,13 @@ def handle_args(data):
 
                 cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
                 print(Panel(cipherpaneldata,UI.size,1,"Cipher Nodes"))
-                resultpaneldata =  ["Ciphertext:    " + ciphernodes[0]]
-                resultpaneldata += ["Plaintext:     " + ciphernodes[-1]]
+                
+                if task == "encrypt":
+                    resultpaneldata =  ["Plaintext:      " + ciphernodes[0]]
+                    resultpaneldata += ["Ciphertext:     " + ciphernodes[-1]]
+                if task == "decrypt":
+                    resultpaneldata =  ["Ciphertext:      " + ciphernodes[0]]
+                    resultpaneldata += ["Plaintext:       " + ciphernodes[-1]]
                 print(Panel(resultpaneldata,UI.size,1,None,"Results"))
 
 def main():
