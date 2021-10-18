@@ -10,7 +10,8 @@ class UI:
     @staticmethod
     def parse_args():
         parser = argparse.ArgumentParser(description="Run various cryptographic algorithms against the Eyes Messages from Noita.")
-        subparsers = parser.add_subparsers(required=True, dest='eyemodule')
+        subparsers = parser.add_subparsers(dest='eyemodule')
+        parser.add_argument('-f', '--file', metavar='JSON', dest='confjson', help='use a config json file')
 
         # ----- MESSAGE PARSING -----
         messageparser = subparsers.add_parser('message')
