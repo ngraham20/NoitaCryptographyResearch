@@ -1,14 +1,14 @@
 from panel import Panel
 
 class Message:
-    def __init__(self, name=None, text=None, delimiter=None):
+    def __init__(self, name, text, delimiter):
         self.name = name
         self.text = text
         self.delimiter = delimiter
     
-    @staticmethod
-    def from_eyes(eyes, name):
-        return Message(name, eyes["messages"][name], eyes["delimiter"])
+    # @staticmethod
+    # def from_eyes(eyes, name):
+    #     return Message(name, eyes["messages"][name], eyes["delimiter"])
     
     @staticmethod
     def _dec_to_rune(tri):
@@ -27,7 +27,7 @@ class Message:
         return int(tri,5)
 
     def as_trigrams(self, style):
-        rows = [x for x in self.text.split('5') if x]
+        rows = [x for x in self.text.split(self.delimiter) if x]
         tris = []
         for i in range(0, len(rows), 2):
             woven_tris = Message._weave_lines_to_trigrams(rows[i], rows[i+1])
@@ -57,7 +57,7 @@ class Message:
     #     print(self.__name__ + " is not yet implemented.")
     
     def _get_lines_panel(self, size):
-        datarows = [x for x in self.text.split('5') if x]
+        datarows = [x for x in self.text.split(self.delimiter) if x]
         title = self.name + ": Lines"
         return Panel(datarows, size, 1, title)
 
