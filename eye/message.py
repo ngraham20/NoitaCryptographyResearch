@@ -33,7 +33,8 @@ class Message:
             woven_tris = Message._weave_lines_to_trigrams(rows[i], rows[i+1])
             for tri in woven_tris:
                 tris.append(tri)
-
+                
+        # BUG: technically, any incorrect style will produce decimal values
         if style != "plain":
             tris = map(Message._tri_to_dec, tris)
         if style == "ascii":
