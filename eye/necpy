@@ -14,6 +14,10 @@ def load_config(filename):
     f.close()
     return eyes
 
+def insert_every(lst, freq, item):
+    for i in range(freq-1,len(lst),freq):
+        lst.insert(i, item)
+
 def handle_args(data):
     eyes = load_config(data["confjson"]) if 'confjson' in data else None
     history = None
@@ -31,17 +35,15 @@ def handle_args(data):
                 ciphernodes = [''.join(message.as_trigrams(style))]
                 current_wheelgroup = 0
                 ciphers = eyes.get("ciphers", [])
-                # ciphers will loop through wheels, so
-                # ciphers and wheelgroups will need to be the same size or wheels is longer
-                # zip(ciphers, wheels) will make sure if there are extra wheels, that it doesn't matter
                 cipherwheelgroups = list(zip(ciphers, list(islice(cycle(wheelgroups), len(ciphers)))))
 
                 # Describe what will happen during cipher step
                 modulepaneldata = ["Cipher " + str(i+1) + ": " + x[0] for i,x in enumerate(cipherwheelgroups)]
                 wheelpaneldata = ["Wheel  " + str(i+1) + ": " + ' -> '.join(x[1]) for i,x in enumerate(cipherwheelgroups)]
 
-                infopaneldata = chain.from_iterable(zip(modulepaneldata, wheelpaneldata))
-                print(Panel(infopaneldata, UI.size,1,"Encryption Order"))
+                infopaneldata = list(chain.from_iterable(zip(modulepaneldata, wheelpaneldata)))
+                # insert_every(infopaneldata, 3, '')
+                print(Panel(infopaneldata, UI.size,1,"Encryption Order").with_groupsize(2))
 
                 for ciphername in ciphers:
                     if ciphername == "substitution":

@@ -4,7 +4,7 @@
     },
     "delimiter":"5",
     "eyes": ["center", "up", "right", "down", "left"],
-    "ciphers":["substitution", "substitution"],
+    "ciphers":["substitution", "substitution", "substitution", "substitution", "substitution", "substitution", "substitution", "substitution"],
     "wheels":[["ᛒᛢ", "*@"], ["*@", "AB"]],
     "tasks":["display", "decrypt"],
     "format": "trigrams",
