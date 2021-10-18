@@ -1,4 +1,6 @@
-# README
+# Noita Eye Cipher
+## Current Progress
+## The State of Cipher Program
 
 ## Example Output
 ```rust
