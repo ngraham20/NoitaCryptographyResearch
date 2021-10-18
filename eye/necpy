@@ -14,12 +14,8 @@ def load_config(filename):
     f.close()
     return eyes
 
-def insert_every(lst, freq, item):
-    for i in range(freq-1,len(lst),freq):
-        lst.insert(i, item)
-
 def handle_args(data):
-    eyes = load_config(data["confjson"]) if 'confjson' in data else None
+    eyes = load_config(data["confjson"]) if 'confjson' in data else data
     history = None
     tasks = eyes.get("tasks", [])
     delimiter = eyes.get("delimiter")
@@ -36,15 +32,14 @@ def handle_args(data):
                 current_wheelgroup = 0
                 ciphers = eyes.get("ciphers", [])
                 cipherwheelgroups = list(zip(ciphers, list(islice(cycle(wheelgroups), len(ciphers)))))
+        
+                # DISPLAY PROCESS
+                subpanels = []
+                for group in cipherwheelgroups:
+                    subpanels += Panel(["Wheel: " + x for x in group[1]], UI.size,1,None,group[0]).as_lines()
+                print(Panel(subpanels[1::], UI.size,0,"Cipher Order"))
 
-                # Describe what will happen during cipher step
-                modulepaneldata = ["Cipher " + str(i+1) + ": " + x[0] for i,x in enumerate(cipherwheelgroups)]
-                wheelpaneldata = ["Wheel  " + str(i+1) + ": " + ' -> '.join(x[1]) for i,x in enumerate(cipherwheelgroups)]
-
-                infopaneldata = list(chain.from_iterable(zip(modulepaneldata, wheelpaneldata)))
-                # insert_every(infopaneldata, 3, '')
-                print(Panel(infopaneldata, UI.size,1,"Encryption Order").with_groupsize(2))
-
+                # PERFORM ENCRYPTION STEPS
                 for ciphername in ciphers:
                     if ciphername == "substitution":
                         wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
@@ -52,9 +47,8 @@ def handle_args(data):
                         current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
                         cipher = SubCipher(wheels)
                     ciphernodes.append(cipher.encode(ciphernodes[-1], history))
-
                 cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
-                print(Panel(cipherpaneldata,UI.size,1,"Cipher Nodes"))
+                print(Panel(cipherpaneldata,UI.size,1,"Encryption"))
                 
                 if task == "encrypt":
                     resultpaneldata =  ["Plaintext:      " + ciphernodes[0]]

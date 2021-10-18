@@ -35,15 +35,21 @@ class Panel:
     def __str__(self):
         return '\n'.join(self.datalines)
 
+    # def as_str(self):
+    #     return '\n'.join(self.datalines)
+
+    def append_data(self, data):
+        self.data += data
+        return self
+
+    def as_lines(self):
+        return self._generate_lines()
+
     def with_groupsize(self, size):
         # we do this backwards, because the size of the array grows past what it's told to count
         for i in range(len(self.data)-size, size-1, size*-1):
             self.data.insert(i, '')
-        return '\n'.join(self._generate_lines())
-
-    # def insert_every(lst, freq, item):
-    #     for i in range(freq-1,len(lst),freq):
-    #         lst.insert(i, item)
+        return self
 
     def _generate_lines(self):
         lines = []
