@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+from itertools import cycle, islice, chain
 from ui import UI
 from message import Message
 from subcipher import SubCipher
@@ -15,49 +16,46 @@ def load_config(filename):
 
 def handle_args(data):
     eyes = load_config(data["confjson"]) if 'confjson' in data else None
-    # history = [] if "history" in data else None
+    history = None
     tasks = eyes.get("tasks", [])
-    messages = eyes.get("messages", [])
     delimiter = eyes.get("delimiter")
+    messages = [Message(k, v, delimiter) for i, (k, v) in enumerate(eyes.get("messages").items())]
+    wheelgroups = eyes.get("wheels", [])
     fmt = eyes.get("format")
     style = eyes.get("style")
+    for message in messages:
+        for task in tasks:
+            if task == "display":
+                print(message.as_panel(UI.size, fmt, style))
+            if task == "encrypt" or task == "decrypt":
+                ciphernodes = [''.join(message.as_trigrams(style))]
+                current_wheelgroup = 0
+                ciphers = eyes.get("ciphers", [])
+                # ciphers will loop through wheels, so
+                # ciphers and wheelgroups will need to be the same size or wheels is longer
+                # zip(ciphers, wheels) will make sure if there are extra wheels, that it doesn't matter
+                cipherwheelgroups = list(zip(ciphers, list(islice(cycle(wheelgroups), len(ciphers)))))
 
-    for task in tasks:
-        if task == "display":
-            for i, (name, message) in enumerate(messages.items()):
-                # if len(message[1]) > 1:
-                #     if message[1][1] == 's':
-                #         style = "ascii"
-                #     elif message[1][1] == 'a':
-                #         style = "alchemic"
-                #     elif message[1][1] == 'r':
-                #         style = "runic"
-                #     elif message[1][1] == 'd':
-                #         style = "decimal"
-                print(Message(name, message, delimiter).as_panel(UI.size, fmt, style))
-            else:
-                print("Cannot print eyes messages if no eyes file is supplied.")
-        elif task == "encrypt" or task == "decrypt":
-            origin = data["origin"] if "origin" in data else None
-            ciphernodes = [origin] if origin else []
-            wheelgroups = data['w'] if 'w' in data else None
-            current_wheelgroup = 0
-            ciphers = data['ciphers'] if 'ciphers' in data else []
-            # Describe what will happen during cipher step
-            modulepaneldata = ["Cipher " + str(i+1) + ": " + x for i,x in enumerate(ciphers)]
-            print(Panel(modulepaneldata, UI.size,1,"Encryption Order"))
-            for ciphername in ciphers:
-                if ciphername == "substitution":
-                    # wow! using map with a constructor actually works!
-                    wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
-                    current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
-                    cipher = SubCipher(wheels)
-                ciphernodes.append(cipher.encode(ciphernodes[-1], history))
-            cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
-            print(Panel(cipherpaneldata,UI.size,1,"Cipher Nodes"))
-            resultpaneldata =  ["Plaintext:      " + origin]
-            resultpaneldata += ["Ciphertext:     " + ciphernodes[-1]]
-            print(Panel(resultpaneldata,UI.size,1,None,"Results"))
+                # Describe what will happen during cipher step
+                modulepaneldata = ["Cipher " + str(i+1) + ": " + x[0] for i,x in enumerate(cipherwheelgroups)]
+                wheelpaneldata = ["Wheel  " + str(i+1) + ": " + ' -> '.join(x[1]) for i,x in enumerate(cipherwheelgroups)]
+
+                infopaneldata = chain.from_iterable(zip(modulepaneldata, wheelpaneldata))
+                print(Panel(infopaneldata, UI.size,1,"Encryption Order"))
+
+                for ciphername in ciphers:
+                    if ciphername == "substitution":
+                        wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
+                        # wow! using map with a constructor actually works!
+                        current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
+                        cipher = SubCipher(wheels)
+                    ciphernodes.append(cipher.encode(ciphernodes[-1], history))
+
+                cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
+                print(Panel(cipherpaneldata,UI.size,1,"Cipher Nodes"))
+                resultpaneldata =  ["Plaintext:      " + ciphernodes[0]]
+                resultpaneldata += ["Ciphertext:     " + ciphernodes[-1]]
+                print(Panel(resultpaneldata,UI.size,1,None,"Results"))
 
 def main():
 

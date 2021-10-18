@@ -5,8 +5,8 @@
     "delimiter":"5",
     "eyes": ["center", "up", "right", "down", "left"],
     "ciphers":["substitution", "substitution"],
-    "wheels":[["abcd", "efgh"], ["efgh", "ijkl"]],
-    "tasks":["display", "encrypt"],
+    "wheels":[["ᛒᛢ", "*@"], ["*@", "AB"]],
+    "tasks":["display", "decrypt"],
     "format": "trigrams",
     "style": "runic"
 }
