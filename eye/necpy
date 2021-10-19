@@ -5,6 +5,7 @@ from itertools import cycle, islice, chain
 from ui import UI
 from message import Message
 from subcipher import SubCipher
+from alberticipher import AlbertiCipher
 from wheel import Wheel
 from panel import Panel
 
@@ -28,7 +29,11 @@ def handle_args(data):
             if task == "display":
                 print(message.as_panel(UI.size, fmt, style))
             if task == "encrypt" or task == "decrypt":
-                ciphernodes = [''.join(message.as_trigrams(style))]
+
+                if fmt == "trigrams":
+                    ciphernodes = [''.join(message.as_trigrams(style))]
+                elif fmt == "plain":
+                    ciphernodes = [''.join(message.text)]
                 current_wheelgroup = 0
                 ciphers = eyes.get("ciphers", [])
                 cipherwheelgroups = list(zip(ciphers, list(islice(cycle(wheelgroups), len(ciphers)))))
@@ -46,6 +51,10 @@ def handle_args(data):
                         # wow! using map with a constructor actually works!
                         current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
                         cipher = SubCipher(wheels)
+                    elif ciphername == "alberti":
+                        wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
+                        current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
+                        cipher = AlbertiCipher(wheels)
                     ciphernodes.append(cipher.encode(ciphernodes[-1], history))
                 cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
                 print(Panel(cipherpaneldata,UI.size,1,"Encryption"))
