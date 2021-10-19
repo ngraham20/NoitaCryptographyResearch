@@ -15,6 +15,6 @@ class AlbertiCipher(WheelCipher):
                 ciphertext += letter
             else:
                 ciphertext += self.wheels[1].data[index]
-                self.advance_wheels(self.wheels, Wheel.Direction.CLOCKWISE)
+                self.advance_wheels(self.wheels[1::], Wheel.Direction.CLOCKWISE)
             AlbertiCipher.record(history, ciphertext)
         return ciphertext
