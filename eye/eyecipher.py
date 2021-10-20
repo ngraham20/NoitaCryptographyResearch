@@ -1,7 +1,12 @@
 from wheelcipher import WheelCipher
 from wheel import Wheel
 
-class AlbertiCipher(WheelCipher):
+class EyeCipher(WheelCipher):
+    """
+    EyeCipher is a custom cipher, which may or may not closely resemble another type of cipher.
+    It's purpose is to allow for customization of encoding and decoding without confusing
+    a user by just modifying a more well-known cipher
+    """
     def encode(self, plaintext, history=None):
         """
         For each letter in plaintext
@@ -36,6 +41,3 @@ class AlbertiCipher(WheelCipher):
                 self.advance_wheels(flipwheels[1::], Wheel.Direction.ANTICLOCKWISE)
             AlbertiCipher.record(history, plaintext)
         return plaintext
-
-
-    

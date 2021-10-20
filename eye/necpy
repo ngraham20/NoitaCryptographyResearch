@@ -6,6 +6,7 @@ from ui import UI
 from message import Message
 from subcipher import SubCipher
 from alberticipher import AlbertiCipher
+from analysis import (Analysis, FreqAnalysis)
 from wheel import Wheel
 from panel import Panel
 
@@ -19,8 +20,11 @@ def handle_args(data):
     eyes = load_config(data["confjson"]) if 'confjson' in data else data
     history = None
     tasks = eyes.get("tasks", [])
+    analyses = eyes.get("analyses", [])
     delimiter = eyes.get("delimiter")
     messages = [Message(k, v, delimiter) for i, (k, v) in enumerate(eyes.get("messages").items())]
+    analysisdata= ""
+    messageanalysisdata = ""
     wheelgroups = eyes.get("wheels", [])
     fmt = eyes.get("format")
     style = eyes.get("style")
@@ -35,6 +39,8 @@ def handle_args(data):
                 elif fmt == "plain":
                     ciphernodes = [''.join(message.text)]
                 current_wheelgroup = 0
+                fromtext = ""
+                totext = ""
                 ciphers = eyes.get("ciphers", [])
                 cipherwheelgroups = list(zip(ciphers, list(islice(cycle(wheelgroups), len(ciphers)))))
         
@@ -42,7 +48,7 @@ def handle_args(data):
                 subpanels = []
                 for group in cipherwheelgroups:
                     subpanels += Panel(["Wheel: " + x for x in group[1]], UI.size,1,None,group[0]).as_lines()
-                print(Panel(subpanels[1::], UI.size,0,"Cipher Order"))
+                print(Panel(subpanels[1::], UI.size,0,message.name + ": Cipher Order"))
 
                 # PERFORM ENCRYPTION STEPS
                 for ciphername in ciphers:
@@ -55,17 +61,48 @@ def handle_args(data):
                         wheels = list(map(Wheel, wheelgroups[current_wheelgroup]))
                         current_wheelgroup = (current_wheelgroup + 1) % len(wheelgroups)
                         cipher = AlbertiCipher(wheels)
-                    ciphernodes.append(cipher.encode(ciphernodes[-1], history))
+                    
+                    if task == "encrypt":
+                        fromtext = "Plaintext:  "
+                        totext   = "Ciphertext: "
+                        ciphernodes.append(cipher.encode(ciphernodes[-1], history))
+                    elif task == "decrypt":
+                        fromtext = "Ciphertext: "
+                        totext   = "Plaintext:  "
+                        ciphernodes.append(cipher.decode(ciphernodes[-1], history))
                 cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
-                print(Panel(cipherpaneldata,UI.size,1,"Encryption"))
-                
-                if task == "encrypt":
-                    resultpaneldata =  ["Plaintext:  " + ciphernodes[0]]
-                    resultpaneldata += ["Ciphertext: " + ciphernodes[-1]]
-                if task == "decrypt":
-                    resultpaneldata =  ["Ciphertext: " + ciphernodes[0]]
-                    resultpaneldata += ["Plaintext:  " + ciphernodes[-1]]
+                print(Panel(cipherpaneldata,UI.size,1,message.name + ": Encryption"))
+
+                resultpaneldata =  [fromtext + ciphernodes[0]]
+                resultpaneldata += [totext + ciphernodes[-1]]
+                messageanalysisdata += ciphernodes[0]
+                analysisdata += ciphernodes[-1]
                 print(Panel(resultpaneldata,UI.size,1,None,"Results"))
+                print('\n')
+
+    for analysis in analyses:
+        if analysis == "frequency":
+            # print("Analyzing: " + analysisdata)
+            (rl, rf) = FreqAnalysis.get_frequency(messageanalysisdata)
+            (cl, cf) = FreqAnalysis.get_frequency(analysisdata)
+            charts = [FreqAnalysis.ENGLISHDATA]
+            charts += [FreqAnalysis.FINNISHDATA]
+            charts.append({
+                "letters": rl,
+                "frequency": rf,
+                "color": "blue",
+                "title":"Trigrams"
+            })
+            charts.append({
+                "letters":cl,
+                "frequency":cf,
+                "color":"blue",
+                "title":"Cipher"})
+            fa = FreqAnalysis(charts, 1)
+            fa.generate_figures()
+            Analysis.analyze()
+
+
 
 def main():
 
