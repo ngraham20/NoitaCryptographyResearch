@@ -2,16 +2,14 @@
     "messages":{
         "messagedata": "all that is gold does not glitter, not all those who wander are lost; the old that is strong does not wither, deep roots are not reached by the frost"
     },
-    "delimiter":"5",
     "tasks":["encrypt"],
     "format": "plain",
-    "style": "runic",
-    "analyses":[],
-    "ciphers":["alberti"],
+    "cipheroptions":{"RotateOnTranslate": true, "RotateOnDouble": true},
+    "ciphers":["eye"],
     "wheels":[
         [
             "abcdefghijklmnopqrstuvwxyz",
-            "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸᚹ"
+            "abcdefghijklmnopqrstuvwxyz"
         ]
     ]
 }

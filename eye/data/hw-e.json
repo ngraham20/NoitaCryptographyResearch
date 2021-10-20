@@ -1,17 +1,15 @@
 {
     "messages":{
-        "messagedata": "hello world"
+        "messagedata": "abcddefg"
     },
-    "delimiter":"5",
     "tasks":["encrypt"],
     "format": "plain",
-    "style": "runic",
-    "analyses":[],
-    "ciphers":["alberti"],
+    "ciphers":["eye"],
+    "cipheroptions":{"RotateOnTranslate": true, "FindAltOnDouble": true},
     "wheels":[
         [
-            "abcdefghijklmnopqrstuvwxyz",
-            "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸᚹ"
+            "abcdefgabcdefg",
+            "abcdefghijklmn"
         ]
     ]
 }

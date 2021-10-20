@@ -6,10 +6,6 @@ class Message:
         self.text = text
         self.delimiter = delimiter
     
-    # @staticmethod
-    # def from_eyes(eyes, name):
-    #     return Message(name, eyes["messages"][name], eyes["delimiter"])
-    
     @staticmethod
     def _dec_to_rune(tri):
         return chr(tri+5792)
@@ -51,11 +47,6 @@ class Message:
             return self._get_trigrams_panel(size, style)
         elif fmt == "lines":
             return self._get_lines_panel(size)
-        # elif format == "pixels":
-        #     self._display_pixels()
-
-    # def _display_pixels(self):
-    #     print(self.__name__ + " is not yet implemented.")
     
     def _get_lines_panel(self, size):
         datarows = [x for x in self.text.split(self.delimiter) if x]
