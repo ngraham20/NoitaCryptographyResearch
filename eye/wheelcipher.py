@@ -13,7 +13,7 @@ class WheelCipher(Cipher):
 
     def as_panel(self, size):
         return Panel(self.wheels, size, 1)
-    
+ 
     @staticmethod
     def advance_wheels(wheels, direction):
         """

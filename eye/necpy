@@ -19,7 +19,8 @@ def load_config(filename):
 
 def handle_args(data):
     eyes = load_config(data["confjson"]) if 'confjson' in data else data
-    history = None
+    historystyle = eyes.get("history", None)
+    history = [] if historystyle else None
     tasks = eyes.get("tasks", [])
     analyses = eyes.get("analyses", [])
     delimiter = eyes.get("delimiter")
@@ -49,7 +50,9 @@ def handle_args(data):
                 # DISPLAY PROCESS
                 subpanels = []
                 for group in cipherwheelgroups:
-                    subpanels += Panel(["Wheel: " + x for x in group[1]], UI.size,1,None,group[0]).as_lines()
+                    subpanels += Panel(["Wheel: " + x for x in group[1]], UI.size,1,None,group[0].capitalize() + " Cipher").as_lines()
+                    if group[0] == "eye":
+                        subpanels += Panel([x for _, (x, _) in enumerate(cipheroptions.items())], UI.size, 1, None, "CipherOptions").as_lines()
                 print(Panel(subpanels[1::], UI.size,0,message.name + ": Cipher Order"))
 
                 # PERFORM ENCRYPTION STEPS
@@ -76,8 +79,16 @@ def handle_args(data):
                         fromtext = "Ciphertext: "
                         totext   = "Plaintext:  "
                         ciphernodes.append(cipher.decode(ciphernodes[-1], history))
-                cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
-                print(Panel(cipherpaneldata,UI.size,1,message.name + ": Encryption"))
+                cipherpaneldata = None
+                if historystyle == "simple":
+                    cipherpaneldata = ["Encryption Step " + str(i) + ": " + x for i,x in enumerate(ciphernodes)]
+                    cpdg = 0
+                elif historystyle == "detailed":
+                    cipherpaneldata = history
+                    cpdg = 5
+                
+                if cipherpaneldata:
+                    print(Panel(cipherpaneldata,UI.size,1,message.name + ": Encryption").with_groupsize(cpdg))
 
                 resultpaneldata =  [fromtext + ciphernodes[0]]
                 resultpaneldata += [totext + ciphernodes[-1]]
@@ -85,6 +96,7 @@ def handle_args(data):
                 analysisdata += ciphernodes[-1]
                 print(Panel(resultpaneldata,UI.size,1,None,"Results"))
                 print('\n')
+
 
     for analysis in analyses:
         if analysis == "frequency":

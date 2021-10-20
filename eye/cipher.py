@@ -7,6 +7,6 @@ class Cipher:
         print("Decode not yet implemented")
     
     @staticmethod
-    def record(history, data):
+    def record(history, line):
         if history is not None:
-            history.append(data)
+            history.append(line)

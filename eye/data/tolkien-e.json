@@ -1,15 +1,16 @@
 {
     "messages":{
-        "messagedata": "all that is gold does not glitter, not all those who wander are lost; the old that is strong does not wither, deep roots are not reached by the frost"
+        "messagedata": "all that is gold"
     },
     "tasks":["encrypt"],
     "format": "plain",
-    "cipheroptions":{"RotateOnTranslate": true, "RotateOnDouble": true},
     "ciphers":["eye"],
+    "history":"simple",
+    "cipheroptions":{"RotateOnTranslate": true, "FindAltOnDouble": true},
     "wheels":[
         [
-            "abcdefghijklmnopqrstuvwxyz",
-            "abcdefghijklmnopqrstuvwxyz"
+            "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+            "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸᚹᚺᚻᚼᚽᚾᚿᛀᛁᛂᛃᛄᛅᛆᛇᛈᛉᛊᛋᛌᛍᛎᛏᛐᛑᛒᛓ"
         ]
     ]
 }

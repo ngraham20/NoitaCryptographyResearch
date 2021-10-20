@@ -5,11 +5,12 @@
     "tasks":["encrypt"],
     "format": "plain",
     "ciphers":["eye"],
+    "history":"detailed",
     "cipheroptions":{"RotateOnTranslate": true, "FindAltOnDouble": true},
     "wheels":[
         [
-            "abcdefgabcdefg",
-            "abcdefghijklmn"
+            "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+            "aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz"
         ]
     ]
 }
