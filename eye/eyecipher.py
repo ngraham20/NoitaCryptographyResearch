@@ -24,16 +24,26 @@ class EyeCipher(WheelCipher):
                 but then rotate again if a double occurs
         """
         ciphertext = ""
+        # EyeCipher.record(history, plaintext)
+
         for letter in plaintext:
+            EyeCipher.record(history, "Plaintext: " + letter)
+            EyeCipher.record(history, "Wheel: " + self.wheels[0].data)
+            EyeCipher.record(history, "Wheel: " + self.wheels[1].data)
             index = self.wheels[0].data.find(letter)
+            datapoints = [letter]
 
             # if no results, add the letter
             if index == -1:
                 ciphertext += letter
+                datapoints.append(letter)
             
-            # # if the new glyph is the previous glyph
+            # # if the new glyph is the previous glyph  🠖
             else:
                 if len(ciphertext) > 0 and self.wheels[1].data[index] == ciphertext[-1]:
+
+                    datapoints.append(ciphertext[-1])
+
                     if self.cipheroptions.get("FindAltOnDouble", False):
                         # find the next one and check if _it's_ -1
                         subindex = self.wheels[0].data.find(letter, index+1)
@@ -48,13 +58,10 @@ class EyeCipher(WheelCipher):
 
                 if self.cipheroptions.get("RotateOnTranslate"):
                     EyeCipher.advance_wheels(self.wheels[1::], Wheel.Direction.CLOCKWISE)
-            EyeCipher.record(history, ciphertext)
+            datapoints.append(ciphertext[-1])
+            EyeCipher.record(history, "Encode " + ' 🠖 '.join(datapoints))
+            EyeCipher.record(history, "Result: " + ciphertext)
         return ciphertext
-
-    # def _translate(self, rotate_on_translate, rotate_on_double):
-
-        
-
 
     def decode(self, ciphertext, history=None):
         """

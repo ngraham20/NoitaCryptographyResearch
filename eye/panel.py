@@ -24,7 +24,7 @@ class Panel:
     modules should have a to_panel(self) method, and the UI should simply print panels.
     """
 
-    def __init__(self, data, size, inset=1, title=None, subtitle=None, bare=False):
+    def __init__(self, data, size, inset=1, title=None, subtitle=None):
         self.data = data
         self.size = size
         self.inset = inset
@@ -35,9 +35,6 @@ class Panel:
     def __str__(self):
         return '\n'.join(self.datalines)
 
-    # def as_str(self):
-    #     return '\n'.join(self.datalines)
-
     def append_data(self, data):
         self.data += data
         return self
@@ -46,9 +43,11 @@ class Panel:
         return self._generate_lines()
 
     def with_groupsize(self, size):
+        if size > 0:
         # we do this backwards, because the size of the array grows past what it's told to count
-        for i in range(len(self.data)-size, size-1, size*-1):
-            self.data.insert(i, '')
+            for i in range(len(self.data)-size, size-1, size*-1):
+                self.data.insert(i, '')
+            self.datalines = self._generate_lines()
         return self
 
     def _generate_lines(self):
