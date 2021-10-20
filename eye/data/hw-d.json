@@ -1,0 +1,17 @@
+{
+    "messages":{
+        "messagedata": "ᚠᚪᚩ ᚰᚣᚵᚭ ᚡᚪ ᚷᚤᚠᚱ ᚰᚠᚯᚢ ᚶᚶᚠ ᚬᚰᚬᚶᚵᚥᚱ, ᚬᚬᚰ ᚶᚦᚥ ᚬᚹᚥᚨᚳ ᚪᚴᚠ ᚧᚪᚶᚫᚫᚷ ᚥᚵᚧ ᚭᚯᚲᚲ; ᚱᚤᚠ ᚩᚥᚶ ᚫᚸᚰᚨ ᚶᚥ ᚤᚤᚡᚷᚵᚭ ᚩᚳᚨᚵ ᚯᚯᚳ ᚵᚦᚰᚣᚹᚫ, ᚶᚶᚵᚥ ᚦᚢᚡᚥᚣ ᚪᚠᚬ ᚴᚴᚸ ᚵᚧᚢᚣᚧᚣᚡ ᚸᚴ ᚮᚡᚷ ᚷᚨᚤᚧᚧ"
+    },
+    "delimiter":"5",
+    "tasks":["decrypt"],
+    "format": "plain",
+    "style": "runic",
+    "analyses":[],
+    "ciphers":["alberti"],
+    "wheels":[
+        [
+            "abcdefghijklmnopqrstuvwxyz",
+            "ᚭᚰᚦᚶᚱᚮᚤᚨᚫᚢᚥᚡᚪᚹᚩᚲᚳᚴᚬᚵᚧᚠᚯᚸᚷᚣ"
+        ]
+    ]
+}

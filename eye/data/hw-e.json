@@ -1,0 +1,17 @@
+{
+    "messages":{
+        "messagedata": "hello world"
+    },
+    "delimiter":"5",
+    "tasks":["encrypt"],
+    "format": "plain",
+    "style": "runic",
+    "analyses":[],
+    "ciphers":["alberti"],
+    "wheels":[
+        [
+            "abcdefghijklmnopqrstuvwxyz",
+            "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸᚹ"
+        ]
+    ]
+}
