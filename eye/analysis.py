@@ -3,11 +3,8 @@ import math
 import matplotlib.pyplot as plt
 
 class Analysis:
-    def __init__(self, charts, width):
-        self.charts = charts
-        self.figures = []
-        self.width = width
-        self.layout = self._calc_layout()
+    def __init__(self, data):
+        self.charts = data
         # self.add_charts(charts)
 
     def _calc_layout(self, extrasize=0):
@@ -18,14 +15,12 @@ class Analysis:
         height = len(self.charts) // width
         return width*10 + height
 
-    def generate_figures(self):
-        pass
-
-    @staticmethod
-    def analyze():
+    def analyze(self):
         # fnt = {"fontname":"Noto Mono"}
         # plt.xlabel("title", **fnt)
         plt.show()
+        
+
 
 class FreqAnalysis(Analysis):
     """
@@ -42,6 +37,13 @@ class FreqAnalysis(Analysis):
         }
     ]    
     """
+
+    def __init__(self, data, charts, width):
+        self.figures = []
+        self.width = width
+        self.layout = self._calc_layout()
+        super().__init__(data)
+
     ENGLISHDATA = {
             "letters": ['E', 'T', 'A', 'O','I','N','S','R','H','D','L','U','C','M','F','Y','W','G','P','B','V','K','X','Q','J','Z'],
             "frequency": [12.02, 9.10, 8.12, 7.68, 7.31, 6.95, 6.28, 6.02, 5.92, 4.32, 3.98, 2.88, 2.71, 2.61, 2.30, 2.11, 2.09, 2.03, 1.82, 1.49, 1.11, 0.69, 0.17, 0.11, 0.10, 0.07],
@@ -54,6 +56,14 @@ class FreqAnalysis(Analysis):
             "color": "blue",
             "title": "Finnish"
             }
+
+    def chisquared(self):
+        """
+        Takes data and compares it
+        x^2(C,E) = SUM{A,Z}((Ci-Ei)^2)/Ei
+        Ei : Expected Result
+        Ci : Actual Result
+        """
 
     def generate_figures(self):
         for fig in self.figures:

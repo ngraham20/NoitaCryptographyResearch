@@ -118,7 +118,7 @@ def handle_args(data):
                 "title":"Cipher"})
             fa = FreqAnalysis(charts, 1)
             fa.generate_figures()
-            Analysis.analyze()
+            FreqAnalyis.analyze()
 
 
 

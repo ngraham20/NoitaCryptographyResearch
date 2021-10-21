@@ -1,0 +1,16 @@
+{
+    "messages":{
+        "messagedata": "ᛖᛟᛟᚨᚰᛖᚨᚭᛞᛆᛒᛟᛄᛄᛒᚸᛞᛚᛒᚨᛆᛟᚭᚨᚨᚸᛙᛚᛒᚨᛖᛟᛟᚨᚰᛒᛞᚸᚪᚰᛒᚪᛖᛚᛄᚸᛙᛖᛙᚸᛟᛒᛞᚨ"
+    },
+    "tasks":["decrypt"],
+    "format": "plain",
+    "ciphers":["substitution"],
+    "analyses":["frequency"],
+    "analysisoptions":{"AnalyzeEach":true, "AnalyzeCombined":true, "ShowGraph": false},
+    "wheels":[
+        [
+            "oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul",
+            "ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ"
+        ]
+    ]
+}

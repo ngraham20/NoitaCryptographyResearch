@@ -1,0 +1,14 @@
+{
+    "messages":{
+        "messagedata": "allthatisgolddoesnotglitternotallthosewhowanderarelost"
+    },
+    "tasks":["encrypt"],
+    "format": "plain",
+    "ciphers":["substitution"],
+    "wheels":[
+        [
+            "oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul",
+            "ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ"
+        ]
+    ]
+}
