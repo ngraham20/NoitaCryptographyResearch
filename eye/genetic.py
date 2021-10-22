@@ -139,7 +139,7 @@ class Genetic:
     def produce_next_generation(self, population, parents, size, deathage):
         children = []
         # nextpopulation = []
-        mcp = 2
+        mcp = 10
 
         dcc = mcp
 
@@ -173,7 +173,7 @@ class Genetic:
         if len(children) > dcc:
             children = children[:-1*(count - dcc)]
         # print(children)
-        nextpopulation = sorted(population, key=lambda x: x.age)[:-2] + children
+        nextpopulation = sorted(population, key=lambda x: x.age)[:-10] + children
         return nextpopulation
 
     
@@ -188,7 +188,7 @@ wheels = [
     Wheel("ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ")
 ]
 
-cipheroptions = {"RotateOnTranslate": true}
+# cipheroptions = {"RotateOnTranslate": true}
 
 
 eyes = load_config('data/genetic-d.json')
@@ -199,14 +199,14 @@ fa = FreqAnalysis([], analysisoptions, 1)
 
 # cipher = SubCipher(wheels)
 # cipher = AlbertiCipher(wheels)
-cipiher = EyeCipher(wheels, cipheroptions)
+cipher = EyeCipher(wheels, cipheroptions)
 
-print(cipher.decode("ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴ"))
+# print(cipher.decode("ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴ"))
 
 
 g = Genetic(cipher, fa)
 
-cm = "ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴ"
+cm = "ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴᚼᚾᛰᛈᚼᚫᛠᚩᛰᛋᚼᛈᛣᛴᛂᚬᚮᚷᚧᚶᚨᛎᛪᚻᛣᛮᛩᛥᚺᚸᛋᛉᛞᛄᛊᛗᛲᛨᚸᛊᚻᛐᛊᛓᚩᛳᛟᛲᛊᚩᛣᚽᚹᛸᛢᚯᚪᛱᚩᚸᛵᛢᛅ"
 ow = "ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ"
 
 pop = g.generate_population(100)
@@ -216,8 +216,8 @@ while True:
     mf = min(pop, key= lambda x: x.fitness)
     # print(mf)
     parents = g.pick_parents(pop, 2)
-    pop = g.produce_next_generation(pop, parents, 100, 1)
-    if mf.fitness < 20:
+    pop = g.produce_next_generation(pop, parents, 100, 30)
+    if mf.fitness < 30:
         break
 
 
