@@ -1,6 +1,8 @@
 from wheel import Wheel
 from subcipher import SubCipher
+from alberticipher import AlbertiCipher
 from analysis import FreqAnalysis
+from eyecipher import EyeCipher
 import random
 import json
 
@@ -8,20 +10,20 @@ class Gene:
     def __init__(self, data):
         self.data = data
         self.fitness = None
+        self.age = 0
 
-    def better_than(self, gene):
-        if self.fitness <= gene.fitness:
-            return True
-        else:
-            return False
+    def __lt__(self, gene):
+        return self.fitness < gene.fitness
 
     @staticmethod
-    def get_children(parents):
-        children = []
-        p1 = list(parents[0].data)
-        p2 = list(parents[1].data)
+    def get_children(p1, p2):
+        # children = []
+        p1 = p1.data
+        p2 = p2.data
 
         # new generation
+        # for _ in range(count):
+        #     children.append([None] * len(p1))
         c1 = [None] * len(p1)
         c2 = [None] * len(p1)
 
@@ -58,11 +60,12 @@ class Gene:
                 td2[i] += 1
             else:
                 td2[i] = 1
-        print(c1)
-        print(max([x for _, (_, x) in enumerate(td.items())]))
-        print(c2)
-        print(max([x for _, (_, x) in enumerate(td2.items())]))
-        # TODO: fix this to create whole generation from two parents
+        # print(c1)
+        # print(max([x for _, (_, x) in enumerate(td.items())]))
+        # print(c2)
+        # print(max([x for _, (_, x) in enumerate(td2.items())]))
+
+        return (Gene(''.join(c1)), Gene(''.join(c2)))
         
 
             
@@ -81,13 +84,14 @@ class Genetic:
             population.append(cipherwheel)
         return population
 
-    def test_population_fitness(self, population):
+    def test_population_fitness(self, population, against):
+        # print([x.data for x in population])
 
         for gene in population:
             # decode with wheel
 
             self.cipher.wheels[1] = Wheel(gene.data)
-            message = self.cipher.decode("ᛖᛟᛟᚨᚰᛖᚨᚭᛞᛆᛒᛟᛄᛄᛒᚸᛞᛚᛒᚨᛆᛟᚭᚨᚨᚸᛙᛚᛒᚨᛖᛟᛟᚨᚰᛒᛞᚸᚪᚰᛒᚪᛖᛚᛄᚸᛙᛖᛙᚸᛟᛒᛞᚨ")
+            message = self.cipher.decode(against)
             (l, c, f) = FreqAnalysis.get_stats(message)
 
             freqdata = [{
@@ -98,22 +102,79 @@ class Genetic:
                 "title": "name"
             }]
             self.analysis.data = freqdata
-            gene.fitness = self.analysis.analyze()
+            gene.fitness = self.analysis.analyze()[0]
+        population.sort()
 
-    def produce_next_generation(self, population):
-        # create a whole new population based off this one, of the same size
-        # pick in groups of two. Odd one out survives too
-        # parents make two children, of opposite crossovers
+    def pick_parents(self, population, count):
+        """
+        numbers range from 0 to 2000
+        say they're 300, 400, 500, 600, 900
+        convert to ranges 0 to 100
+        sum is 2700
+        300/2700 = 0.11 110 slots
+        400/2700 = 0.15 150 slot
+        500/2700 = 0.19 190 slots
+        600/2700 = 0.22 220 slots
+        900/2700 = 0.33 330 slots
 
-        # TODO pick two parents only, produce whole population from them
-        popsize = len(population)
-        sections = [population[x:x+2] for x in range(0, popsize, 2)]
-        nextpopulation = []
-        for parents in sections:
-            if len(parents) < 2:
-                nextpopulation.append(parents[0])
-            else:
-                Gene.get_children(parents)
+        """
+        s = sum([x.fitness for x in population])
+        slots = []
+        selected = []
+        
+        for gene in population:
+            slots.append(1000 * gene.fitness / s)
+        slots.reverse()
+
+        i = 0
+        while i < count:
+            picker = random.randint(0,1000)
+            for j, gene in enumerate(population):
+                if picker >= slots[j] and gene not in selected:
+                    selected.append(gene)
+                    i+=1
+                    break
+        return selected
+
+    def produce_next_generation(self, population, parents, size, deathage):
+        children = []
+        # nextpopulation = []
+        mcp = 2
+
+        dcc = mcp
+
+        # grab parents in groups of 2
+        sections = [population[x:x+2] for x in range(0, len(parents), 2)]
+        if len(sections[-1]) < 2:
+            sections = sections[:-1]
+        # print(sections)
+
+        count = 0
+        i = 0
+        while len(children) < dcc:
+            parents = sections[i]
+            children += list(Gene.get_children(parents[0], parents[1]))
+            count+=2
+            i = (i + 1) % len(sections)
+        
+        for x in population:
+            x.age += 1
+            # if x.age > deathage:
+            #     population.remove(x)
+
+        # kc = 0
+        # if len(population) > size - mcp:
+        #     kc = len(population) - size - mcp
+        
+        # dcc = size - len(population)
+
+        # if too many produced, ditch the last one
+        # print(children)
+        if len(children) > dcc:
+            children = children[:-1*(count - dcc)]
+        # print(children)
+        nextpopulation = sorted(population, key=lambda x: x.age)[:-2] + children
+        return nextpopulation
 
     
 def load_config(filename):
@@ -127,14 +188,59 @@ wheels = [
     Wheel("ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ")
 ]
 
+cipheroptions = {"RotateOnTranslate": true}
+
+
 eyes = load_config('data/genetic-d.json')
 analysisoptions = eyes.get("analysisoptions")
+cipheroptions = eyes.get("cipheroptions")
 
-fa = FreqAnalysis([], analysisoptions, 1)            
+fa = FreqAnalysis([], analysisoptions, 1)           
 
-cipher = SubCipher(wheels)
+# cipher = SubCipher(wheels)
+# cipher = AlbertiCipher(wheels)
+cipiher = EyeCipher(wheels, cipheroptions)
+
+print(cipher.decode("ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴ"))
+
 
 g = Genetic(cipher, fa)
-pop = g.generate_population(5)
-g.test_population_fitness(pop)
-g.produce_next_generation(pop)
+
+cm = "ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴ"
+ow = "ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ"
+
+pop = g.generate_population(100)
+while True:
+    g.test_population_fitness(pop, cm)
+    # print([x.fitness for x in pop])
+    mf = min(pop, key= lambda x: x.fitness)
+    # print(mf)
+    parents = g.pick_parents(pop, 2)
+    pop = g.produce_next_generation(pop, parents, 100, 1)
+    if mf.fitness < 20:
+        break
+
+
+# g.test_population_fitness(pop)
+# m = min(pop, key= lambda x: x.fitness)
+cipher.wheels[1] = Wheel(mf.data)
+message = cipher.decode(cm)
+print(mf.data)
+print(mf.fitness)
+print(message)
+
+cipher.wheels[1] = Wheel(ow)
+m2 = cipher.decode(cm)
+print(ow)
+(l, c, f) = FreqAnalysis.get_stats(m2)
+
+freqdata = [{
+    "letters": l,
+    "count": c,
+    "frequency": f,
+    "color": "blue",
+    "title": "name"
+}]
+fa.data = freqdata
+print(fa.analyze()[0])
+print(m2)

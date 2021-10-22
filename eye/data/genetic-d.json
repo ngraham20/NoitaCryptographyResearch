@@ -1,13 +1,15 @@
 {
     "messages":{
-        "tolkien": "ᛖᛟᛟᚨᚰᛖᚨᚭᛞᛆᛒᛟᛄᛄᛒᚸᛞᛚᛒᚨᛆᛟᚭᚨᚨᚸᛙᛚᛒᚨᛖᛟᛟᚨᚰᛒᛞᚸᚪᚰᛒᚪᛖᛚᛄᚸᛙᛖᛙᚸᛟᛒᛞᚨ"
+        "tolkien": "ᛖᛮᛥᛖᛛᛦᚬᛮᛒᛒᛍᚠᛃᚯᛝᚥᛨᚫᛸᛕᚽᛡᛞᛘᚥᛝᚱᚷᛪᚾᛅᛲᛨᛅᛦᛚᛪᛜᚡᛄᛠᚮᚦᛉᚰᚼᛃᚣᛲᚵᛜᛤᚢᚴ"
     },
     "tasks":["decrypt"],
     "format": "plain",
-    "ciphers":["substitution"],
-    "analyses":["frequency"],
+    "ciphers":["eye"],
+    "history":"detailed",
+    "cipheroptions":{"RotateOnTranslate": true},
+    "analyses":[],
     "analysisoptions":{
-        "AnalyzeEach":true,
+        "AnalyzeEach":false,
         "AnalyzeCombined":false,
         "Graph": false,
         "Algorithm":"chisquared",
