@@ -9,3 +9,6 @@
 - INFO https://en.wikipedia.org/wiki/Hermetic_Order_of_the_Golden_Dawn, https://en.wikipedia.org/wiki/Cipher_Manuscripts
 - DONE each module should handle their own arguments, main loop iterates modules
 - DONE implement a path option that can handle taking plaintext and sending it through multiple encryptions.
+- TODO implement chi squared analysis of a single message
+- TODO add a flag for analyzing every message and analyzing each message
+- TODO implement genetic algorithms to guess wheel orientations

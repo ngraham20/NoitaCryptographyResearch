@@ -7,7 +7,7 @@ from message import Message
 from subcipher import SubCipher
 from alberticipher import AlbertiCipher
 from eyecipher import EyeCipher
-from analysis import (Analysis, FreqAnalysis)
+from analysis import FreqAnalysis
 from wheel import Wheel
 from panel import Panel
 
@@ -25,9 +25,11 @@ def handle_args(data):
     analyses = eyes.get("analyses", [])
     delimiter = eyes.get("delimiter")
     messages = [Message(k, v, delimiter) for i, (k, v) in enumerate(eyes.get("messages").items())]
+    results = []
     analysisdata= ""
     messageanalysisdata = ""
     cipheroptions = eyes.get("cipheroptions")
+    analysisoptions = eyes.get("analysisoptions")
     wheelgroups = eyes.get("wheels", [])
     fmt = eyes.get("format")
     style = eyes.get("style")
@@ -94,31 +96,38 @@ def handle_args(data):
                 resultpaneldata += [totext + ciphernodes[-1]]
                 messageanalysisdata += ciphernodes[0]
                 analysisdata += ciphernodes[-1]
+                results.append((message.name, ciphernodes[-1]))
                 print(Panel(resultpaneldata,UI.size,1,None,"Results"))
                 print('\n')
 
 
     for analysis in analyses:
         if analysis == "frequency":
-            # print("Analyzing: " + analysisdata)
-            (rl, rf) = FreqAnalysis.get_frequency(messageanalysisdata)
-            (cl, cf) = FreqAnalysis.get_frequency(analysisdata)
-            charts = [FreqAnalysis.ENGLISHDATA]
-            charts += [FreqAnalysis.FINNISHDATA]
-            charts.append({
-                "letters": rl,
-                "frequency": rf,
-                "color": "blue",
-                "title":"Trigrams"
-            })
-            charts.append({
-                "letters":cl,
-                "frequency":cf,
-                "color":"blue",
-                "title":"Cipher"})
-            fa = FreqAnalysis(charts, 1)
-            fa.generate_figures()
-            Analysis.analyze()
+            freqdata = []
+            if analysisoptions.get("AnalyzeEach", False):
+                for i, (name, message) in enumerate(results):
+                    (l, c, f) = FreqAnalysis.get_stats(message)
+
+                    freqdata.append({
+                        "letters": l,
+                        "count": c,
+                        "frequency": f,
+                        "color": "blue",
+                        "title": name
+                    })
+
+            if analysisoptions.get("AnalyzeCombined", False):
+                (l, c, f) = FreqAnalysis.get_stats(''.join([x[1] for x in results]))
+                freqdata.append({
+                    "letters": l,
+                    "count": c,
+                    "frequency": f,
+                    "color": "blue",
+                    "title": "Ciphertext"
+                })
+
+            fa = FreqAnalysis(freqdata, analysisoptions, 1)            
+            fa.analyze(analysisoptions.get("CompareWith", []))
 
 
 
