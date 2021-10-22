@@ -63,20 +63,48 @@ class EyeCipher(WheelCipher):
             EyeCipher.record(history, "Result: " + ciphertext)
         return ciphertext
 
-    def decode(self, ciphertext, history=None):
+    def decode(self, plaintext, history=None):
         """
         For each glyph in ciphertext
             for each wheel
                 propegate the glyph backwards through to the first wheel
         """
-        plaintext = ""
-        flipwheels = self.wheels[::-1]
-        for glyph in ciphertext:
-            index = flipwheels[0].data.find(glyph)
+        ciphertext = ""
+        # EyeCipher.record(history, plaintext)
+
+        for letter in plaintext:
+            EyeCipher.record(history, "Plaintext: " + letter)
+            EyeCipher.record(history, "Wheel: " + self.wheels[0].data)
+            EyeCipher.record(history, "Wheel: " + self.wheels[1].data)
+            index = self.wheels[1].data.find(letter)
+            datapoints = [letter]
+
+            # if no results, add the letter
             if index == -1:
-                plaintext += glyph
+                ciphertext += letter
+                datapoints.append(letter)
+            
+            # # if the new glyph is the previous glyph  🠖
             else:
-                plaintext += flipwheels[1].data[index]
-                self.advance_wheels(flipwheels[1::], Wheel.Direction.ANTICLOCKWISE)
-            AlbertiCipher.record(history, plaintext)
-        return plaintext
+                if len(ciphertext) > 0 and self.wheels[0].data[index] == ciphertext[-1]:
+
+                    datapoints.append(ciphertext[-1])
+
+                    if self.cipheroptions.get("FindAltOnDouble", False):
+                        # find the next one and check if _it's_ -1
+                        subindex = self.wheels[1].data.find(letter, index+1)
+                        if subindex != -1:
+                            index = subindex
+
+                    elif self.cipheroptions.get("RotateOnDouble", False):
+                        # find the next one
+                        EyeCipher.advance_wheels(self.wheels[1::], Wheel.Direction.CLOCKWISE) 
+                
+                ciphertext += self.wheels[0].data[index]
+
+                if self.cipheroptions.get("RotateOnTranslate"):
+                    EyeCipher.advance_wheels(self.wheels[1::], Wheel.Direction.CLOCKWISE)
+            datapoints.append(ciphertext[-1])
+            EyeCipher.record(history, "Encode " + ' 🠖 '.join(datapoints))
+            EyeCipher.record(history, "Result: " + ciphertext)
+        return ciphertext

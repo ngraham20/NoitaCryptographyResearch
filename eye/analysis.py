@@ -47,14 +47,6 @@ class FreqAnalysis(Analysis):
         self.width = width
         self.layout = 111
 
-    def chisquared(self):
-        """
-        Takes data and compares it
-        x^2(C,E) = SUM{A,Z}((Ci-Ei)^2)/Ei
-        Ei : Expected Result
-        Ci : Actual Result
-        """
-
     def _calc_layout(self, extrasize=0):
         width = 0
         for width in range(math.ceil(math.sqrt(len(self.data))) + extrasize, 0, -1):
@@ -78,9 +70,10 @@ class FreqAnalysis(Analysis):
             ax.bar(ind, chart["frequency"], self.width, color=chart["color"])
             fig.tight_layout()
 
-    def analyze(self, compareto):
-
+    def analyze(self):
+        outdata = []
         algorithm = self.options.get("Algorithm")
+        compareto = self.options.get("CompareWith", [])
         if algorithm == "chisquared":
 
             # for each language
@@ -93,7 +86,6 @@ class FreqAnalysis(Analysis):
                     cszl = sorted(zip(chart["letters"], chart["count"], chart["frequency"]))
                     ml = sum([c for (_, c, _) in cszl])
                     chidata = []
-                    # print(cszl)
                     for letter in cszl:
                         ci = letter[1]
                         i = compchart["letters"].index(letter[0].upper())
@@ -101,7 +93,7 @@ class FreqAnalysis(Analysis):
                         chidata.append(((ci - ei)**2)/ei)
 
                     chi = np.sum(chidata)
-                    print(chi)
+                    outdata.append(chi)
                 
 
 
@@ -111,6 +103,8 @@ class FreqAnalysis(Analysis):
             self.layout = self._calc_layout()
             self.generate_figures()
             plt.show()
+        
+        return outdata
 
     @staticmethod
     def get_stats(text):

@@ -1,10 +1,11 @@
 {
     "messages":{
-        "messagedata": "allthatisgolddoesnotglitternotallthosewhowanderarelost"
+        "messagedata": "allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrost"
     },
     "tasks":["encrypt"],
     "format": "plain",
-    "ciphers":["substitution"],
+    "ciphers":["alberti"],
+    "history":"simple",
     "wheels":[
         [
             "oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul",

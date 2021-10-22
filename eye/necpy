@@ -127,7 +127,7 @@ def handle_args(data):
                 })
 
             fa = FreqAnalysis(freqdata, analysisoptions, 1)            
-            fa.analyze(analysisoptions.get("CompareWith", []))
+            fa.analyze(analysisoptions)
 
 
 
