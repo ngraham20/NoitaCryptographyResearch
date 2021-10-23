@@ -191,7 +191,7 @@ wheels = [
 # cipheroptions = {"RotateOnTranslate": true}
 
 
-eyes = load_config('data/genetic-d.json')
+eyes = load_config('../data/genetic-d.json')
 analysisoptions = eyes.get("analysisoptions")
 cipheroptions = eyes.get("cipheroptions")
 
