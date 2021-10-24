@@ -1,16 +1,19 @@
 use crate::errors::*;
+use std::fmt;
 
 #[derive(Clone, Debug)]
 pub struct Gene {
     pub genomes: Vec<u8>,
-    pub age: u64
+    pub age: u64,
+    pub fitness: f64
 }
 
 impl Gene {
-    pub fn new() -> Gene {
+    pub fn new() -> Self {
         Gene {
             genomes: Vec::new(),
-            age: 0
+            age: 0,
+            fitness: 0.0
         }
     }
     /// Takes a random two genomes and swaps them
@@ -32,6 +35,16 @@ impl Gene {
     }
 }
 
+impl From<&str> for Gene {
+    fn from(item: &str) -> Self {
+        Gene {
+            genomes: item.as_bytes().to_vec(),
+            age: 0,
+            fitness: 0.0
+        }
+    }
+}
+
 // 1. Create a population with random genes
 // 2. Figure out which n are the best
 // 3. Remove some or all of the rest
@@ -39,11 +52,35 @@ impl Gene {
 //    The parents and children are now the population
 // 5. Repeat until some condition is reached
 
-pub fn createPopulation(size: usize, genome: Gene) -> Result<Vec<Gene>> {
-    let population: Vec<Gene> = vec![genome.clone(); size]
+/// Takes two genes and generates a population of size
+pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
+    let population: Vec<Gene> = vec![gene.clone(); size]
         .into_iter()
         .map(|mut x| {x.shuffle(); x})
         .collect();
 
     Ok(population)
+}
+
+/// Test multiple frequencies in English
+/// http://pi.math.cornell.edu/~mec/2003-2004/cryptography/subs/digraphs.html
+/// http://pi.math.cornell.edu/~mec/2003-2004/cryptography/subs/hints.html
+/// http://pi.math.cornell.edu/~mec/2003-2004/cryptography/subs/frequencies.html
+/// https://www3.nd.edu/~busiforc/handouts/cryptography/Letter%20Frequencies.html#trigrams
+/// - Monographs: E and T are most common
+/// - Digraphs: TH and HE are most common
+/// - Trigraphs: THE, AND, ING, HER are the most common
+/// - Doubles: Commonly SS, LL, OO, EE, NN, PP. Seldom AA, YY, or UU
+/// 
+/// Steps:
+/// - Decode the message using the cipher and the gene
+/// - Decode the result 25 times through substitution
+/// - The best of these is the fitness for that gene
+/// 
+/// The idea here is that if knowing one wheel turns this problem into
+/// a substitution cipher, then even with some of the letters wrong, we
+/// may be able to see actual english come out of it
+pub fn testPopulation(population: &Vec<Gene>) -> Result<()> {
+
+    Ok(())
 }
