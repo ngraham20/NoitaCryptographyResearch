@@ -32,18 +32,21 @@ fn main() {
 }
 
 fn run() -> Result<()> {
-    // let mut g = gene::Gene::from("abcdefg");
-    // let pop = gene::createPopulation(10, &g)?;
-    // println!("Original Gene: {:?}", std::str::from_utf8(&g.genomes)?);
-    // println!("Resulting Population: {:?}", pop.into_iter().map(|x| String::from_utf8(x.genomes)));
-    let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u32).collect::<Vec<u32>>());
-    let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u32).collect::<Vec<u32>>());
+    let mut g = gene::Gene::from("ᚠᚡᚢᚣᚤᚥᚦ");
+    let pop = gene::createPopulation(10, &g)?;
+    println!("Original Gene: {:?}", g.genome_string()?);
+
+    println!("Resulting Population: {:?}", pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>());
+    let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u16).collect::<Vec<u16>>());
+    let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u16).collect::<Vec<u16>>());
     let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    let a = acipher.encode(&"hello world".chars().map(|x|x as u32).collect::<Vec<u32>>())?;
-    println!("{:X?}", a.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    let a = acipher.encode(&"hello world".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
+    println!("{:X?}", std::char::decode_utf16(a.clone())
+        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
     let mut bcipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    let b = bcipher.decode(&"ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x|x as u32).collect::<Vec<u32>>())?;
-    println!("{:X?}", b.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    let b = bcipher.decode(&"ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
+    println!("{:X?}", std::char::decode_utf16(b.clone())
+        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
     
     Ok(())
 }

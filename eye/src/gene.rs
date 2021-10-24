@@ -3,7 +3,7 @@ use std::fmt;
 
 #[derive(Clone, Debug)]
 pub struct Gene {
-    pub genomes: Vec<u8>,
+    pub genomes: Vec<u16>,
     pub age: u64,
     pub fitness: f64
 }
@@ -15,6 +15,11 @@ impl Gene {
             age: 0,
             fitness: 0.0
         }
+    }
+
+    pub fn genome_string(&self) -> Result<String> {
+        Ok(std::char::decode_utf16(self.genomes.clone())
+        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>())
     }
     /// Takes a random two genomes and swaps them
     pub fn mutate(&mut self) -> Result<()> {
@@ -38,7 +43,7 @@ impl Gene {
 impl From<&str> for Gene {
     fn from(item: &str) -> Self {
         Gene {
-            genomes: item.as_bytes().to_vec(),
+            genomes: item.chars().map(|x| x as u16).collect::<Vec<u16>>(),
             age: 0,
             fitness: 0.0
         }
@@ -54,7 +59,7 @@ impl From<&str> for Gene {
 
 /// Takes two genes and generates a population of size
 pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
-    let population: Vec<Gene> = vec![gene.clone(); size]
+    let population: Vec<Gene> = vec![Gene {genomes: gene.genomes.clone(), ..*gene}; size]
         .into_iter()
         .map(|mut x| {x.shuffle(); x})
         .collect();
