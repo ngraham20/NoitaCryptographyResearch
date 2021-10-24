@@ -1,5 +1,6 @@
 use crate::errors::*;
 use std::fmt;
+use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 pub struct Gene {
@@ -19,7 +20,7 @@ impl Gene {
 
     pub fn genome_string(&self) -> Result<String> {
         Ok(std::char::decode_utf16(self.genomes.clone())
-        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>())
+        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect())
     }
     /// Takes a random two genomes and swaps them
     pub fn mutate(&mut self) -> Result<()> {
@@ -43,7 +44,17 @@ impl Gene {
 impl From<&str> for Gene {
     fn from(item: &str) -> Self {
         Gene {
-            genomes: item.chars().map(|x| x as u16).collect::<Vec<u16>>(),
+            genomes: item.chars().map(|x| x as u16).collect(),
+            age: 0,
+            fitness: 0.0
+        }
+    }
+}
+
+impl From<&Vec<u16>> for Gene {
+    fn from(item: &Vec<u16>) -> Self {
+        Gene {
+            genomes: item.clone(),
             age: 0,
             fitness: 0.0
         }
@@ -59,11 +70,10 @@ impl From<&str> for Gene {
 
 /// Takes two genes and generates a population of size
 pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
-    let population: Vec<Gene> = vec![Gene {genomes: gene.genomes.clone(), ..*gene}; size]
-        .into_iter()
-        .map(|mut x| {x.shuffle(); x})
-        .collect();
-
+    let mut population: Vec<Gene> = vec![Gene::from(&gene.genomes); size];
+    for mut gene in population.iter_mut() {
+        gene.shuffle();
+    }
     Ok(population)
 }
 
@@ -85,7 +95,24 @@ pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
 /// The idea here is that if knowing one wheel turns this problem into
 /// a substitution cipher, then even with some of the letters wrong, we
 /// may be able to see actual english come out of it
-pub fn testPopulation(population: &Vec<Gene>) -> Result<()> {
+pub fn testGene(gene: &mut Gene) -> Result<()> {
 
+    gene.fitness = 10.0;
+    Ok(())
+}
+
+pub fn testMonogramsEnglish(message: &Vec<u16>) -> Result<f64> {
+    let eletters = ['E', 'T', 'A', 'O','I','N','S','R','H','D','L','U','C','M','F','Y','W','G','P','B','V','K','X','Q','J','Z'];
+    let efreq = [12.02, 9.10, 8.12, 7.68, 7.31, 6.95, 6.28, 6.02, 5.92, 4.32, 3.98, 2.88, 2.71, 2.61, 2.30, 2.11, 2.09, 2.03, 1.82, 1.49, 1.11, 0.69, 0.17, 0.11, 0.10, 0.07];
+    let english: HashMap<u16, f64> = (0..eletters.len()).map(|i| (eletters[i] as u16, efreq[i])).collect();
+
+    Ok(10.0)
+}
+
+pub fn testPopulation(population: &mut Vec<Gene>) -> Result<()> {
+
+    for mut gene in population {
+        testGene(&mut gene);
+    }
     Ok(())
 }

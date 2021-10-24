@@ -33,10 +33,14 @@ fn main() {
 
 fn run() -> Result<()> {
     let mut g = gene::Gene::from("ᚠᚡᚢᚣᚤᚥᚦ");
-    let pop = gene::createPopulation(10, &g)?;
+    let mut pop = gene::createPopulation(10, &g)?;
     println!("Original Gene: {:?}", g.genome_string()?);
 
     println!("Resulting Population: {:?}", pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>());
+    testPopulation(&mut pop);
+    println!("Resulting Population Fitness: {:?}", pop.iter().map(|x| x.fitness).collect::<Vec<f64>>());
+    
+    
     let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u16).collect::<Vec<u16>>());
     let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u16).collect::<Vec<u16>>());
     let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
