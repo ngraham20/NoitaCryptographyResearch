@@ -51,6 +51,10 @@ fn run() -> Result<()> {
     let b = bcipher.decode(&"ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
     println!("{:X?}", std::char::decode_utf16(b.clone())
         .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
+
+    let e = "FROMTHEASHESAFIRESHALLBEWOKENALIGHTFROMTHESHADOWSSHALLSPRING".chars().map(|x| x as u16).collect::<Vec<u16>>();
+    let echi = testMonogramsEnglish(&e)?;
+    println!("echi: {}", echi);
     
     Ok(())
 }

@@ -101,12 +101,27 @@ pub fn testGene(gene: &mut Gene) -> Result<()> {
     Ok(())
 }
 
+fn testChiSquared(o: &HashMap<u16, f64>, e: &HashMap<u16, f64>) -> Result<f64> {
+
+    let mut chisquare: Vec<f64> = Vec::new();
+    for ((oke, ova), (eke, eva)) in o.iter().zip(e.iter()) {
+        chisquare.push((ova - eva).powi(2) / eva);
+    }
+    Ok(chisquare.iter().sum())
+}
+
 pub fn testMonogramsEnglish(message: &Vec<u16>) -> Result<f64> {
     let eletters = ['E', 'T', 'A', 'O','I','N','S','R','H','D','L','U','C','M','F','Y','W','G','P','B','V','K','X','Q','J','Z'];
     let efreq = [12.02, 9.10, 8.12, 7.68, 7.31, 6.95, 6.28, 6.02, 5.92, 4.32, 3.98, 2.88, 2.71, 2.61, 2.30, 2.11, 2.09, 2.03, 1.82, 1.49, 1.11, 0.69, 0.17, 0.11, 0.10, 0.07];
     let english: HashMap<u16, f64> = (0..eletters.len()).map(|i| (eletters[i] as u16, efreq[i])).collect();
 
-    Ok(10.0)
+    let mut mletters: HashMap<u16, f64> = HashMap::new();
+    for letter in message {
+        let count = mletters.entry(*letter).or_insert(0.0);
+        *count += 1.0;
+    }
+    // TODO I forgot to actually get the frequency here. RN it's just doing the count for chi squared
+    Ok(testChiSquared(&mletters, &english)?)
 }
 
 pub fn testPopulation(population: &mut Vec<Gene>) -> Result<()> {
