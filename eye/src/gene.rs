@@ -104,23 +104,43 @@ pub fn testGene(gene: &mut Gene) -> Result<()> {
 fn testChiSquared(o: &HashMap<u16, f64>, e: &HashMap<u16, f64>) -> Result<f64> {
 
     let mut chisquare: Vec<f64> = Vec::new();
-    for ((oke, ova), (eke, eva)) in o.iter().zip(e.iter()) {
-        chisquare.push((ova - eva).powi(2) / eva);
+
+    for (eke, eva) in e {
+        if let  Some(ova) = o.get(eke) {
+            chisquare.push((ova - eva).powi(2) / eva);
+        }
+        else {
+            error_chain::bail!("Chisquared: Observed hashmap missing value from Expected");
+        }
     }
+    println!("CHISQUARE: {:?}", chisquare);
     Ok(chisquare.iter().sum())
 }
 
 pub fn testMonogramsEnglish(message: &Vec<u16>) -> Result<f64> {
-    let eletters = ['E', 'T', 'A', 'O','I','N','S','R','H','D','L','U','C','M','F','Y','W','G','P','B','V','K','X','Q','J','Z'];
-    let efreq = [12.02, 9.10, 8.12, 7.68, 7.31, 6.95, 6.28, 6.02, 5.92, 4.32, 3.98, 2.88, 2.71, 2.61, 2.30, 2.11, 2.09, 2.03, 1.82, 1.49, 1.11, 0.69, 0.17, 0.11, 0.10, 0.07];
+    let eletters = ['E',  'T',  'A',  'O',  'I',  'N',  'S',  'R',  'H',  'D',  'L',  'U','C','M','F','Y','W','G','P','B','V','K','X','Q','J','Z'];
+    let efreq =    [12.02, 9.10, 8.12, 7.68, 7.31, 6.95, 6.28, 6.02, 5.92, 4.32, 3.98, 2.88, 2.71, 2.61, 2.30, 2.11, 2.09, 2.03, 1.82, 1.49, 1.11, 0.69, 0.17, 0.11, 0.10, 0.07];
     let english: HashMap<u16, f64> = (0..eletters.len()).map(|i| (eletters[i] as u16, efreq[i])).collect();
-
+    // println!("{:?}", english);
     let mut mletters: HashMap<u16, f64> = HashMap::new();
     for letter in message {
         let count = mletters.entry(*letter).or_insert(0.0);
         *count += 1.0;
     }
-    // TODO I forgot to actually get the frequency here. RN it's just doing the count for chi squared
+
+    println!("MLETTERS: {:?}", mletters);
+
+    for (_, v) in mletters.iter_mut() {
+        *v = *v * 100f64 / message.len() as f64
+    }
+
+    // make sure the rest of the alphabet is here
+    for letter in eletters {
+        mletters.entry(letter as u16).or_insert(0.0);
+    }
+
+    println!("MLETTERS AFTER MATH {:?}", mletters);
+    // CORRECT UP TO HERE
     Ok(testChiSquared(&mletters, &english)?)
 }
 

@@ -32,27 +32,30 @@ fn main() {
 }
 
 fn run() -> Result<()> {
-    let mut g = gene::Gene::from("ᚠᚡᚢᚣᚤᚥᚦ");
-    let mut pop = gene::createPopulation(10, &g)?;
-    println!("Original Gene: {:?}", g.genome_string()?);
+    // let mut g = gene::Gene::from("ᚠᚡᚢᚣᚤᚥᚦ");
+    // let mut pop = gene::createPopulation(10, &g)?;
+    // println!("Original Gene: {:?}", g.genome_string()?);
 
-    println!("Resulting Population: {:?}", pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>());
-    testPopulation(&mut pop);
-    println!("Resulting Population Fitness: {:?}", pop.iter().map(|x| x.fitness).collect::<Vec<f64>>());
+    // println!("Resulting Population: {:?}", pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>());
+    // testPopulation(&mut pop);
+    // println!("Resulting Population Fitness: {:?}", pop.iter().map(|x| x.fitness).collect::<Vec<f64>>());
     
     
-    let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u16).collect::<Vec<u16>>());
-    let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u16).collect::<Vec<u16>>());
-    let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    let a = acipher.encode(&"hello world".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
-    println!("{:X?}", std::char::decode_utf16(a.clone())
-        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
-    let mut bcipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    let b = bcipher.decode(&"ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
-    println!("{:X?}", std::char::decode_utf16(b.clone())
-        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
+    // let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u16).collect::<Vec<u16>>());
+    // let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u16).collect::<Vec<u16>>());
+    // let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
+    // let a = acipher.encode(&"hello world".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
+    // println!("{:X?}", std::char::decode_utf16(a.clone())
+    //     .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
+    // let mut bcipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
+    // let b = bcipher.decode(&"ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x|x as u16).collect::<Vec<u16>>())?;
+    // println!("{:X?}", std::char::decode_utf16(b.clone())
+    //     .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
 
     let e = "FROMTHEASHESAFIRESHALLBEWOKENALIGHTFROMTHESHADOWSSHALLSPRING".chars().map(|x| x as u16).collect::<Vec<u16>>();
+    println!("{}", e.len());
+    println!("{:?}", std::char::decode_utf16(e.clone())
+        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
     let echi = testMonogramsEnglish(&e)?;
     println!("echi: {}", echi);
     
