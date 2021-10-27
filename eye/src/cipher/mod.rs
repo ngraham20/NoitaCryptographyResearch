@@ -7,6 +7,6 @@ pub use substitution::Substitution;
 pub use std::collections::VecDeque as Wheel;
 
 pub trait Cipher {
-    fn encode(&mut self, message: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>>;
-    fn decode(&mut self, ciphertext: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>>;
+    fn encode(&mut self, message: Vec<u32>) -> Result<Vec<u32>>;
+    fn decode(&mut self, ciphertext: Vec<u32>) -> Result<Vec<u32>>;
 }

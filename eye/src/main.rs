@@ -43,16 +43,16 @@ fn run() -> Result<()> {
     
     
     // TODO: make this stuff work with generics so I can toy with it more than I am. This is a nightmare to modify haha
-    let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| String::from(x).as_bytes().to_vec()).collect::<Vec<Vec<u8>>>());
-    let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| String::from(x).as_bytes().to_vec()).collect::<Vec<Vec<u8>>>());
+    let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u32).collect::<Vec<u32>>());
+    let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u32).collect::<Vec<u32>>());
     let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    let a = acipher.encode("hello world".chars().map(|x| String::from(x).as_bytes().to_vec()).collect::<Vec<Vec<u8>>>())?;
-    println!("{:X?}", a.iter().map(|x| std::str::from_utf8(x).unwrap()).collect::<String>());
+    let a = acipher.encode("hello world".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
+    println!("{:X?}", a.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
     let mut bcipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    let b = bcipher.decode("ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x| String::from(x).as_bytes().to_vec()).collect::<Vec<Vec<u8>>>())?;
-    println!("{:X?}", b.iter().map(|x| std::str::from_utf8(x).unwrap()).collect::<String>());
+    let b = bcipher.decode("ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
+    println!("{:X?}", b.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
 
-    let e: Vec<Vec<u8>> = "ofalltheplacestotravelmexicoisatthetopofmylist".chars().into_iter().map(|x| String::from(x).as_bytes().to_vec()).collect();
+    let e: Vec<u32> = "ofalltheplacestotravelmexicoisatthetopofmylist".chars().into_iter().map(|x| x as u32).collect();
     let echi = testMonogramsEnglish(&e)?;
     println!("echi: {}", echi);
     let lanfreqs: serde_json::Value = util::loadJson("data/english.json")?;
