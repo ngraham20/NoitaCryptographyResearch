@@ -22,8 +22,7 @@ impl Gene {
     }
 
     pub fn genome_string(&self) -> Result<String> {
-        Ok(self.genomes.clone().into_iter().flatten()
-            .map(|c| c as char).collect())
+        Ok(self.genomes.clone().iter().map(|x| std::str::from_utf8(x).unwrap()).collect())
     }
     /// Takes a random two genomes and swaps them
     pub fn mutate(&mut self) -> Result<()> {
@@ -114,8 +113,6 @@ fn testChiSquared(o: &HashMap<Vec<u8>, f64>, e: &HashMap<Vec<u8>, f64>) -> Resul
 
     for (eke, eva) in e {
         if let  Some(ova) = o.get(eke) {
-            // this is wrong. It's the observed count vs the expected count
-            println!("{},{},{},{}", std::str::from_utf8(eke)?,eva,std::str::from_utf8(eke)?,ova);
             chisquare.push((ova - eva).powi(2) / eva);
         }
         else {
@@ -142,8 +139,6 @@ pub struct Language {
 
 impl Language {
     pub fn datagrams(&self) -> Result<HashMap<Vec<u8>, f64>> {
-        // use byteorder::{ByteOrder, BigEndian, LittleEndian};
-        // Ok(self.monograms.iter()
         Ok(self.monograms.iter().map(|(k, v)| (k.as_bytes().to_vec(), *v)).collect())
     }
 
