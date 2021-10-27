@@ -42,6 +42,7 @@ fn run() -> Result<()> {
     println!("Resulting Population Fitness: {:?}", pop.iter().map(|x| x.fitness).collect::<Vec<f64>>());
     
     
+    // TODO: make this stuff work with generics so I can toy with it more than I am. This is a nightmare to modify haha
     let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| String::from(x).as_bytes().to_vec()).collect::<Vec<Vec<u8>>>());
     let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| String::from(x).as_bytes().to_vec()).collect::<Vec<Vec<u8>>>());
     let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
