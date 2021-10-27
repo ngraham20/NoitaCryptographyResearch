@@ -53,29 +53,56 @@ fn run() -> Result<()> {
     // println!("{:X?}", std::char::decode_utf16(b.clone())
     //     .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
 
-    // let e = "ENALHEASHESAFGHTFROMTHEIRESHALLBEWOKADISHFROMTOWSSHALLSPRING".chars().map(|x| x as u16).collect::<Vec<u16>>();
+    let e: Vec<Vec<u8>> = "ofalltheplacestotravelmexicoisatthetopofmylist".chars().into_iter().map(|x| String::from(x).as_bytes().to_vec()).collect();
     // println!("{}", e.len());
-    // println!("{:?}", std::char::decode_utf16(e.clone())
-    //     .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect::<String>());
-    // let echi = testMonogramsEnglish(&e)?;
-    // println!("echi: {}", echi);
+    let echi = testMonogramsEnglish(&e)?;
+    println!("echi: {}", echi);
+    let lanfreqs: serde_json::Value = util::loadJson("data/english.json")?;
+    let english: Language = serde_json::from_value(lanfreqs)?;
+    // english.print_csv();
+
+    // let lanfreqs: serde_json::Value = util::loadJson("data/test.json")?;
+    // let english: Language = serde_json::from_value(lanfreqs)?;
+    // use std::collections::HashMap;
+    // let mut test: HashMap<Vec<u8>, &str> = HashMap::new();
+    // // use byteorder::{ByteOrder, BigEndian, LittleEndian};
+    // let r0 = "a".as_bytes();
+    // let r1 = "ᚴ".as_bytes();
+    // let r2 = "ᚵ".as_bytes();
+    // let r3 = "ᛪ".as_bytes();
+    // let r4 = "ᚠ".as_bytes();
+    // test.insert(r0.to_vec(), "a");
+    // test.insert(r1.to_vec(), "ᚴ");
+    // test.insert(r4.to_vec(), "ᚠ");
+    // println!("a: {:X?}", r0);
+    // println!("ᚴ: {:X?}", r1);
+    // println!("ᚵ: {:X?}", r2);
+    // println!("ᛪ: {:X?}", r3);
+    // println!("ᚠ: {:X?}", r4);
+    // println!("hm: {:X?}", test);
+    // println!("trial: {}", test[&vec![0xE1, 0x9A, 0xB4]]);
+    // println!("ᚠ: {:X?}", english.datagrams()?.get(&vec![0xE1, 0x9A, 0xA0]).unwrap());
+
     // let b = b"Hello World!";
 
-    let mut hm: HashMap<[u8;2], u8> = HashMap::new();
-    hm.insert([1, 2], 3);
+    // let mut hm: HashMap<[u8;2], u8> = HashMap::new();
+    // hm.insert([1, 2], 3);
 
-    let b: [u8; 2] = [1, 2];
-    let c: Vec<u8> = vec![1, 2];
+    // let b: [u8; 2] = [1, 2];
+    // let mut c: Vec<u8> = vec![];
 
-    println!("{:?}", hm.get(&b));
+    // println!("{:?}", hm.get(&b));
 
-    // INFO: this actually works! You can use an array as a map value... huh
+    // // INFO: this actually works! You can use an array as a map value... huh
 
 
-    let mut ht: HashMap<Vec<u8>, u8> = HashMap::new();
-    ht.insert(vec![1, 2], 3);
+    // let mut ht: HashMap<Vec<u8>, u8> = HashMap::new();
+    // ht.insert(vec![1, 2], 3);
+    // c.push(1);
+    // c.push(2);
 
-    println!("{:?}", ht.get(&c));
+
+    // println!("{:?}", ht.get(&c));
 
     // INFO: holy crap, this works too...
 
@@ -90,23 +117,22 @@ fn run() -> Result<()> {
 
     Ok(())
 }
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
-use serde_with::*;
-use serde_with::serde_as;
-use std::collections::BTreeMap;
+// use serde::{Serialize, Deserialize};
+// use std::collections::HashMap;
+// use serde_with::*;
+// use serde_with::serde_as;
 
-#[serde_as]
-#[derive(Serialize, Deserialize)]
-struct Language {
-    #[serde_as(as = "HashMap<DisplayFromStr, serde_with::hex::Hex>")]
-    monograms: HashMap<String, Vec<u8>>,
-}
+// #[serde_as]
+// #[derive(Serialize, Deserialize)]
+// struct Language {
+//     #[serde_as(as = "HashMap<DisplayFromStr, DisplayFromStr>")]
+//     monograms: HashMap<String, f64>,
+// }
 
-#[serde_as]
-#[derive(Deserialize, Serialize)]
-struct ByteArray(
-    // Equivalent to serde_with::hex::Hex<serde_with::formats::Lowercase>
-    #[serde_as(as = "serde_with::hex::Hex")]
-    [u8; 12]
-);
+// #[serde_as]
+// #[derive(Deserialize, Serialize)]
+// struct ByteArray(
+//     // Equivalent to serde_with::hex::Hex<serde_with::formats::Lowercase>
+//     #[serde_as(as = "serde_with::hex::Hex")]
+//     [u8; 12]
+// );

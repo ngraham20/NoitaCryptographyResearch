@@ -7,7 +7,7 @@ use serde_with::serde_as;
 
 #[derive(Clone, Debug)]
 pub struct Gene {
-    pub genomes: Vec<u16>,
+    pub genomes: Vec<Vec<u8>>,
     pub age: u64,
     pub fitness: f64
 }
@@ -22,8 +22,8 @@ impl Gene {
     }
 
     pub fn genome_string(&self) -> Result<String> {
-        Ok(std::char::decode_utf16(self.genomes.clone())
-        .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER)).collect())
+        Ok(self.genomes.clone().into_iter().flatten()
+            .map(|c| c as char).collect())
     }
     /// Takes a random two genomes and swaps them
     pub fn mutate(&mut self) -> Result<()> {
@@ -46,16 +46,20 @@ impl Gene {
 
 impl From<&str> for Gene {
     fn from(item: &str) -> Self {
+        let mut data: Vec<Vec<u8>> = vec![];
+        for letter in item.chars() {
+            data.push(String::from(letter).as_bytes().to_vec());
+        }
         Gene {
-            genomes: item.chars().map(|x| x as u16).collect(),
+            genomes: data.clone(),
             age: 0,
             fitness: 0.0
         }
     }
 }
 
-impl From<&Vec<u16>> for Gene {
-    fn from(item: &Vec<u16>) -> Self {
+impl From<&Vec<Vec<u8>>> for Gene {
+    fn from(item: &Vec<Vec<u8>>) -> Self {
         Gene {
             genomes: item.clone(),
             age: 0,
@@ -104,12 +108,14 @@ pub fn testGene(gene: &mut Gene) -> Result<()> {
     Ok(())
 }
 
-fn testChiSquared(o: &HashMap<u16, f64>, e: &HashMap<u16, f64>) -> Result<f64> {
+fn testChiSquared(o: &HashMap<Vec<u8>, f64>, e: &HashMap<Vec<u8>, f64>) -> Result<f64> {
 
     let mut chisquare: Vec<f64> = Vec::new();
 
     for (eke, eva) in e {
         if let  Some(ova) = o.get(eke) {
+            // this is wrong. It's the observed count vs the expected count
+            println!("{},{},{},{}", std::str::from_utf8(eke)?,eva,std::str::from_utf8(eke)?,ova);
             chisquare.push((ova - eva).powi(2) / eva);
         }
         else {
@@ -124,40 +130,48 @@ pub fn testDigramsEnglish(message: &Vec<u16>) -> Result<f64> {
     Ok(1f64)
 }
 
+use serde_with::hex::Hex;
+use serde_with::DisplayFromStr;
+
 #[serde_as]
 #[derive(Serialize, Deserialize)]
-struct Language {
-    #[serde_as(as = "HashMap<serde_with::hex::Hex, f64")]
-    monograms: HashMap<u16, f64>,
+pub struct Language {
+    #[serde_as(as = "HashMap<_, _>")]
+    pub monograms: HashMap<String, f64>,
 }
 
-// impl Language {
-//     fn monoDatagrams(&self) -> Result<HashMap<u16, f64>> {
-//         Ok(self.monograms.clone().into_iter().map(|(x, y)| (x as u16, y)).collect())
-//     }
-// }
+impl Language {
+    pub fn datagrams(&self) -> Result<HashMap<Vec<u8>, f64>> {
+        // use byteorder::{ByteOrder, BigEndian, LittleEndian};
+        // Ok(self.monograms.iter()
+        Ok(self.monograms.iter().map(|(k, v)| (k.as_bytes().to_vec(), *v)).collect())
+    }
 
-// pub fn testMonogramsEnglish(message: &Vec<u16>) -> Result<f64> {
-//     use serde_json::Value;
-//     let lanfreqs: Value = util::loadJson("data/test.json")?;
-//     let english: Language = serde_json::from_value(lanfreqs)?;
-//     // let eletters = ['e',  't',  'a',  'o',  'i',  'n',  's',  'r',  'h',  'd',  'l',  'u', 'c', 'm', 'f', 'y', 'w', 'g', 'p', 'b', 'v', 'k', 'x', 'q', 'j', 'z'];
-//     // let efreq =    [12.02, 9.10, 8.12, 7.68, 7.31, 6.95, 6.28, 6.02, 5.92, 4.32, 3.98, 2.88, 2.71, 2.61, 2.30, 2.11, 2.09, 2.03, 1.82, 1.49, 1.11, 0.69, 0.17, 0.11, 0.10, 0.07];
-//     // let english: HashMap<u16, f64> = (0..eletters.len()).map(|i| (eletters[i] as u16, efreq[i])).collect();
-//     let mut mletters: HashMap<u16, f64> = HashMap::new();
-//     for letter in message {
-//         let count = mletters.entry(*letter).or_insert(0.0);
-//         *count += 1.0;
-//     }
-//     for (_, v) in mletters.iter_mut() {
-//         *v = *v * 100f64 / message.len() as f64
-//     }
-//     // make sure the rest of the alphabet is here
-//     for (letter, _) in &english.monograms {
-//         mletters.entry(*letter as u16).or_insert(0.0);
-//     }
-//     Ok(testChiSquared(&mletters, &english.monograms)?)
-// }
+    pub fn print_csv(&self) -> Result<()> {
+        for (k, v) in self.monograms.iter() {
+            println!("{},{}",k,v);
+        }
+        Ok(())
+    }
+}
+
+pub fn testMonogramsEnglish(message: &Vec<Vec<u8>>) -> Result<f64> {
+    let lanfreqs: serde_json::Value = util::loadJson("data/english.json")?;
+    let mut englishdata = serde_json::from_value::<Language>(lanfreqs)?.datagrams()?;
+    let mut mletters: HashMap<Vec<u8>, f64> = HashMap::new();
+    for letter in message {
+        let count = mletters.entry(letter.clone()).or_insert(0.0);
+        *count += 1.0;
+    }
+    for (_, v) in englishdata.iter_mut() {
+        *v = *v / 100f64 * message.len() as f64
+    }
+    // make sure the rest of the alphabet is here
+    for (letter, _) in &englishdata {
+        mletters.entry(letter.clone()).or_insert(0.0);
+    }
+    Ok(testChiSquared(&mletters, &englishdata)?)
+}
 
 pub fn testPopulation(population: &mut Vec<Gene>) -> Result<()> {
 
