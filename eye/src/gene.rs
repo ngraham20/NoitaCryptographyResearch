@@ -84,8 +84,7 @@ pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
 /// - Monographs: E and T are most common
 /// - Digraphs: TH and HE are most common
 /// - Trigraphs: THE, AND, ING, HER are the most common
-/// - Doubles: Commonly SS, LL, OO, EE, NN, PP. Seldom AA, YY, or UU
-/// 
+///
 /// Steps:
 /// - Decode the message using the cipher and the gene
 /// - Decode the result 25 times through substitution
@@ -94,9 +93,18 @@ pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
 /// The idea here is that if knowing one wheel turns this problem into
 /// a substitution cipher, then even with some of the letters wrong, we
 /// may be able to see actual english come out of it
-pub fn testGene(gene: &mut Gene) -> Result<()> {
-
-    gene.fitness = 10.0;
+pub fn testGene(gene: &mut Gene, language: &crate::language::Language) -> Result<()> {
+    let monochi = testMonograms(&gene.genomes, language.monograms()?)?;
+    let dichi = testMultigram(&gene.genomes, language.digrams()?, 2)?;
+    let trichi = testMultigram(&gene.genomes, language.trigrams()?, 3)?;
+    let quadrichi = testMultigram(&gene.genomes, language.quadrigrams()?, 4)?;
+    let doublechi = testMultigram(&gene.genomes, language.doubles()?, 2)?;
+    // println!("Gene: {:?}", &gene.genomes);
+    // println!("m: {}, d: {}, t: {}, q: {}, dd: {}", monochi, dichi, trichi, quadrichi, doublechi);
+    // println!();
+    gene.fitness = monochi + dichi + trichi + quadrichi + doublechi;
+    // gene.fitness = 8f64 * monochi + 4f64*dichi + 2f64*trichi + quadrichi;
+    // gene.fitness = monochi + 2f64 * dichi + 4f64 * trichi + 8f64 * quadrichi;
     Ok(())
 }
 
@@ -106,7 +114,7 @@ fn testChiSquared<T: std::cmp::Eq + std::hash::Hash + std::fmt::Debug>(o: &HashM
 
     for (eke, eva) in e {
         if let Some(ova) = o.get(eke) {
-            println!("{:?},{:?} | {:?},{:?}", eke, eva, eke, ova);
+            // println!("{:?},{:?} | {:?},{:?}", eke, eva, eke, ova);
             chisquare.push((ova - eva).powi(2) / eva);
         }
         else {
@@ -116,9 +124,11 @@ fn testChiSquared<T: std::cmp::Eq + std::hash::Hash + std::fmt::Debug>(o: &HashM
     Ok(chisquare.iter().sum())
 }
 
+// aaaaaaaa
 pub fn testMultigram(message: &Vec<u32>, mut compdata: HashMap<Vec<u32>, f64>, size: usize) -> Result<f64> {
     let mut mesdata: HashMap<Vec<u32>, f64> = HashMap::new();
-    for i in (0..message.len()-size-1) {
+    let mlen = message.len()-size-1;
+    for i in (0..mlen) {
         // mdi is any given digram (including overlaps)
         let mdi = message[i..i+size].to_vec();
         let count = mesdata.entry(mdi).or_insert(0.0);
@@ -126,7 +136,7 @@ pub fn testMultigram(message: &Vec<u32>, mut compdata: HashMap<Vec<u32>, f64>, s
     }
 
     for (_, v) in compdata.iter_mut() {
-        *v = *v / 100f64 * message.len() as f64
+        *v = *v / 100f64 * mlen as f64
     }
 
     // fill the message data with any missing common datagrams
@@ -153,10 +163,9 @@ pub fn testMonograms(message: &Vec<u32>, mut compdata: HashMap<u32, f64>) -> Res
     Ok(testChiSquared(&mesdata, &compdata)?)
 }
 
-pub fn testPopulation(population: &mut Vec<Gene>) -> Result<()> {
-
+pub fn testPopulation(population: &mut Vec<Gene>, language: &crate::language::Language) -> Result<()> {
     for mut gene in population {
-        testGene(&mut gene);
+        testGene(&mut gene, &language);
     }
     Ok(())
 }
