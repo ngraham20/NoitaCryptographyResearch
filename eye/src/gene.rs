@@ -1,9 +1,6 @@
 use crate::errors::*;
 use crate::util;
-use std::fmt;
 use std::collections::HashMap;
-use serde::{Serialize, Deserialize};
-use serde_with::serde_as;
 
 #[derive(Clone, Debug)]
 pub struct Gene {
@@ -103,12 +100,13 @@ pub fn testGene(gene: &mut Gene) -> Result<()> {
     Ok(())
 }
 
-fn testChiSquared(o: &HashMap<u32, f64>, e: &HashMap<u32, f64>) -> Result<f64> {
+fn testChiSquared<T: std::cmp::Eq + std::hash::Hash + std::fmt::Debug>(o: &HashMap<T, f64>, e: &HashMap<T, f64>) -> Result<f64> {
 
     let mut chisquare: Vec<f64> = Vec::new();
 
     for (eke, eva) in e {
-        if let  Some(ova) = o.get(eke) {
+        if let Some(ova) = o.get(eke) {
+            println!("{:?},{:?} | {:?},{:?}", eke, eva, eke, ova);
             chisquare.push((ova - eva).powi(2) / eva);
         }
         else {
@@ -118,50 +116,41 @@ fn testChiSquared(o: &HashMap<u32, f64>, e: &HashMap<u32, f64>) -> Result<f64> {
     Ok(chisquare.iter().sum())
 }
 
-pub fn testDigramsEnglish(message: &Vec<u16>) -> Result<f64> {
-
-    Ok(1f64)
-}
-
-use serde_with::hex::Hex;
-use serde_with::DisplayFromStr;
-
-#[serde_as]
-#[derive(Serialize, Deserialize)]
-pub struct Language {
-    #[serde_as(as = "HashMap<_, _>")]
-    pub monograms: HashMap<char, f64>,
-}
-
-impl Language {
-    pub fn datagrams(&self) -> Result<HashMap<u32, f64>> {
-        Ok(self.monograms.iter().map(|(k, v)| (*k as u32, *v)).collect())
-    }
-
-    pub fn print_csv(&self) -> Result<()> {
-        for (k, v) in self.monograms.iter() {
-            println!("{},{}",k,v);
-        }
-        Ok(())
-    }
-}
-
-pub fn testMonogramsEnglish(message: &Vec<u32>) -> Result<f64> {
-    let lanfreqs: serde_json::Value = util::loadJson("data/english.json")?;
-    let mut englishdata = serde_json::from_value::<Language>(lanfreqs)?.datagrams()?;
-    let mut mletters: HashMap<u32, f64> = HashMap::new();
-    for letter in message {
-        let count = mletters.entry(letter.clone()).or_insert(0.0);
+pub fn testMultigram(message: &Vec<u32>, mut compdata: HashMap<Vec<u32>, f64>, size: usize) -> Result<f64> {
+    let mut mesdata: HashMap<Vec<u32>, f64> = HashMap::new();
+    for i in (0..message.len()-size-1) {
+        // mdi is any given digram (including overlaps)
+        let mdi = message[i..i+size].to_vec();
+        let count = mesdata.entry(mdi).or_insert(0.0);
         *count += 1.0;
     }
-    for (_, v) in englishdata.iter_mut() {
+
+    for (_, v) in compdata.iter_mut() {
         *v = *v / 100f64 * message.len() as f64
     }
-    // make sure the rest of the alphabet is here
-    for (letter, _) in &englishdata {
-        mletters.entry(letter.clone()).or_insert(0.0);
+
+    // fill the message data with any missing common datagrams
+    for (letter, v) in compdata.iter() {
+        mesdata.entry(letter.clone()).or_insert(0.0);
     }
-    Ok(testChiSquared(&mletters, &englishdata)?)
+    Ok(testChiSquared(&mesdata, &compdata)?)
+}
+
+pub fn testMonograms(message: &Vec<u32>, mut compdata: HashMap<u32, f64>) -> Result<f64> {
+    let mut mesdata: HashMap<u32, f64> = HashMap::new();
+    for letter in message {
+        let count = mesdata.entry(letter.clone()).or_insert(0.0);
+        *count += 1.0;
+    }
+    for (_, v) in compdata.iter_mut() {
+        *v = *v / 100f64 * message.len() as f64
+    }
+
+    // make sure the rest of the alphabet is here
+    for (letter, v) in compdata.iter() {
+        mesdata.entry(letter.clone()).or_insert(0.0);
+    }
+    Ok(testChiSquared(&mesdata, &compdata)?)
 }
 
 pub fn testPopulation(population: &mut Vec<Gene>) -> Result<()> {

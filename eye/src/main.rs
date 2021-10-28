@@ -4,6 +4,8 @@
 mod errors;
 use errors::*;
 mod cipher;
+mod language;
+use language::Language;
 mod prelude {
     pub use crate::cipher::{Alberti, Substitution, Wheel, Cipher};
 }
@@ -41,21 +43,36 @@ fn run() -> Result<()> {
     testPopulation(&mut pop);
     println!("Resulting Population Fitness: {:?}", pop.iter().map(|x| x.fitness).collect::<Vec<f64>>());
     
-    
-    // TODO: make this stuff work with generics so I can toy with it more than I am. This is a nightmare to modify haha
     let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u32).collect::<Vec<u32>>());
     let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u32).collect::<Vec<u32>>());
     let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
     let a = acipher.encode("hello world".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
-    println!("{:X?}", a.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    println!("{:?}", a.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
     let mut bcipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
     let b = bcipher.decode("ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
-    println!("{:X?}", b.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    println!("{:?}", b.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
 
-    let e: Vec<u32> = "ofalltheplacestotravelmexicoisatthetopofmylist".chars().into_iter().map(|x| x as u32).collect();
-    let echi = testMonogramsEnglish(&e)?;
-    println!("echi: {}", echi);
-    let lanfreqs: serde_json::Value = util::loadJson("data/english.json")?;
-    let english: Language = serde_json::from_value(lanfreqs)?;
+    let mut e: Vec<u32> = "allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrostfromtheashesafireshallbewokenalightfromtheshadowsshallspringrenewedshallbebladethatwasbrokenthecrownlessagainshallbeking".chars().into_iter().map(|x| x as u32).collect();
+    use rand::thread_rng;
+    use rand::seq::SliceRandom;
+    e.shuffle(&mut thread_rng());
+    println!("{:?}", e.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    let engdata: serde_json::Value = util::loadJson("data/english.json")?;
+    let english: Language = serde_json::from_value(engdata)?;
+    println!();
+    let monochi = testMonograms(&e, english.monograms()?)?;
+    println!();
+    let dichi = testMultigram(&e, english.digrams()?, 2)?;
+    println!();
+    let trichi = testMultigram(&e, english.trigrams()?, 3)?;
+    println!();
+    let quadrichi = testMultigram(&e, english.quadrigrams()?, 4)?;
+    println!();
+
+    println!("monochi: {}", monochi);
+    println!("dichi: {}", dichi);
+    println!("trichi: {}", trichi);
+    println!("quadrichi: {}", quadrichi);
+    println!("total: {}", 4f64 * monochi + 3f64 * dichi + 2f64 * trichi + quadrichi);
     Ok(())
 }
