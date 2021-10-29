@@ -17,7 +17,6 @@ impl Gene {
             fitness: 0.0
         }
     }
-
     pub fn genome_string(&self) -> Result<String> {
         Ok(self.genomes.clone().iter().map(|x| std::char::from_u32(*x).unwrap()).collect())
     }
@@ -27,7 +26,10 @@ impl Gene {
         let mut rng = rand::thread_rng();
         let distro = Uniform::from(0..self.genomes.len());
         let genomea = distro.sample(&mut rng);
-        let genomeb = distro.sample(&mut rng);
+        let mut genomeb = distro.sample(&mut rng);
+        if genomea == genomeb {
+            genomeb = (genomeb + 1) % self.genomes.len();
+        }
         self.genomes.swap(genomea, genomeb);
         Ok(())
     }
@@ -115,5 +117,79 @@ impl From<&Vec<u32>> for Gene {
             age: 0,
             fitness: 0.0
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::genetics::gene::Gene;
+    
+    #[test]
+    fn from_string() {
+        let gene = Gene::from("gandalf");
+        assert_eq!("gandalf".chars().map(|x| x as u32).collect::<Vec<u32>>(), gene.genomes)
+    }
+    #[test]
+    fn genome_string() {
+        let gene = Gene::from("islidur");
+        assert_eq!("islidur", gene.genome_string().unwrap())
+    }
+    #[test]
+    fn shuffle() {
+        use std::collections::HashMap;
+        let genea = Gene::from("frodo");
+        let mut gac: HashMap<u32, usize> = HashMap::new();
+        
+        // count genomes in genea
+        for genome in &genea.genomes {
+            let count = gac.entry(*genome).or_insert(0);
+            *count += 1;
+        }
+        
+        let mut geneb = genea.clone();
+        geneb.shuffle();
+        let mut gbc: HashMap<u32, usize> = HashMap::new();
+
+        // count genomes in geneb
+        for genome in &geneb.genomes {
+            let count = gbc.entry(*genome).or_insert(0);
+            *count += 1;
+        }
+
+        // pass if the counts are the same, but the genomes are different
+        assert_eq!(gac, gbc);
+        assert_ne!(genea.genomes, geneb.genomes);
+    }
+    #[test]
+    fn mutate() {
+        use std::collections::HashMap;
+        let genea = Gene::from("abcdefg");
+        let mut gac: HashMap<u32, usize> = HashMap::new();
+        
+        // count genomes in genea
+        for genome in &genea.genomes {
+            let count = gac.entry(*genome).or_insert(0);
+            *count += 1;
+        }
+        
+        let mut geneb = genea.clone();
+        geneb.mutate();
+        let mut gbc: HashMap<u32, usize> = HashMap::new();
+
+        // count genomes in geneb
+        for genome in &geneb.genomes {
+            let count = gbc.entry(*genome).or_insert(0);
+            *count += 1;
+        }
+
+        let mut errors = 0;
+        for i in (0..genea.genomes.len()) {
+            if genea.genomes[i] != geneb.genomes[i] {
+                errors += 1;
+            }
+        }
+        // pass if the counts are the same and exactly two genomes are misplaced
+        assert_eq!(gac, gbc);
+        assert_eq!(2, errors);
     }
 }

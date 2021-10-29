@@ -69,6 +69,7 @@ pub fn incrementGeneration(population: &mut Vec<Gene>, count: usize) -> Result<(
     Ok(())
 }
 
+// TODO: change the test from the whole population to just one gene, the looping can just happen in here
 pub fn run<T>(origin: Gene,
     popsize: usize,
     test: fn(&mut Vec<Gene>, &T) -> Result<()>,
