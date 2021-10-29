@@ -2,16 +2,17 @@
 #![allow(warnings)]
 
 mod errors;
-use errors::*;
 mod cipher;
 mod language;
-use language::Language;
-mod prelude {
-    pub use crate::cipher::{Alberti, Substitution, Wheel, Cipher};
-}
+mod genetics;
 mod util;
-mod gene;
-use gene::*;
+mod prelude {
+    pub use crate::errors::*;
+    pub use crate::language::Language;
+    pub use crate::cipher::{Alberti, Substitution, Wheel, Cipher};
+    pub use crate::genetics::Gene;
+    pub use crate::genetics::algorithm;
+}
 use prelude::*;
 
 fn main() {
@@ -38,22 +39,50 @@ fn run() -> Result<()> {
     let engdata: serde_json::Value = util::loadJson("data/english.json")?;
     let english: Language = serde_json::from_value(engdata)?;
 
-    let mut g = gene::Gene::from("allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrostfromtheashesafireshallbewokenalightfromtheshadowsshallspringrenewedshallbebladethatwasbrokenthecrownlessagainshallbeking");
-    let mut pop = gene::createPopulation(10, &g)?;
-    println!("Original Gene: {:?}", g.genome_string()?);
-    testGene(&mut g, &english);
-    println!("Orginal Fitness: {}", g.fitness);
-    // println!("Resulting Population: {:?}", pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>());
-    testPopulation(&mut pop, &english);
-    println!("Resulting Population Fitness: {:?}", pop.iter().map(|x| x.fitness).collect::<Vec<f64>>());
+    //  allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrostfromtheashesafireshallbewokenalightfromtheshadowsshallspringrenewedshallbebladethatwasbrokenthecrownlessagainshallbeking
+    //  hihmdlethaxgldfnaoagmserocdrlhcatnbcnhctehpleoltwayurandafchcleaeevpcrfbslfcprekljcnpcndcghsfhrswqyfgkefesybnuduiheunnagmitbaitmidsrmegptspscosisrsripufemcdoirervfhtoguaunkylapidisvycvnwdsploahcednuvnwpnxtcdoambogyrmluykmrmhnyxledrehjbih
     
-    // let mut ptwheel = Wheel::from("eodlrwh".chars().map(|x| x as u32).collect::<Vec<u32>>());
-    // let mut ctwheel = Wheel::from("ᚠᚡᚢᚣᚤᚥᚦ".chars().map(|x| x as u32).collect::<Vec<u32>>());
+    // let mut g = Gene::from("allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrostfromtheashesafireshallbewokenalightfromtheshadowsshallspringrenewedshallbebladethatwasbrokenthecrownlessagainshallbeking");
+    // let mut g = Gene::from("allthatisgolddoesnotglitter");
+    // let mut g = Gene::from("hellothere");
+    // let mut pop = algorithm::createPopulation(100, &g)?;
+    // println!("Original Gene: {:?}", g.genome_string()?);
+    // genetics::algorithm::incrementGeneration(&mut pop, 100)?;
+    // for i in (0..200) {
+    //     println!("generation: {}", i);
+    //     genetics::algorithm::incrementGeneration(&mut pop, 100)?;
+    //     genetics::algorithm::testPopulation(&mut pop, &english);
+    // }
+    // println!("Fittest: {:?}", &pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>()[0..10]);
+    // println!("Fitness: {:?}", &pop.iter().map(|x| x.fitness).collect::<Vec<f64>>()[0..10]);
+    //"oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul",
+    //"ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ"
+    let mut origin = Gene::from("ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ");
+    algorithm::testGene(&mut origin, &english)?;
+    println!("original fitness: {}", origin.fitness);
+    algorithm::run(origin, 100, genetics::algorithm::testPopulation, &english, |x| x < 140f64);
+    // println!("Fittest: {:?}", &pop.iter().map(|x| x.genome_string().unwrap()).collect::<Vec<String>>()[0..10]);
+    // println!("Fitness: {:?}", &pop.iter().map(|x| x.fitness).collect::<Vec<f64>>()[0..10]);
+    
+    // pub use crate::cipher::{Alberti, Substitution, Wheel, Cipher};
+    // let mut ptwheel = Wheel::from("oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul".chars().map(|x| x as u32).collect::<Vec<u32>>());
+
+    // for gene in &pop[0..10] {
+    //     let mut ctwheel = Wheel::from(gene.genomes.clone());
+    //     let mut cipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
+    //     let plaintext = cipher.decode("ᛖᛣᛈᛮᚴᛥᛈᛇᛎᚧᚶᛗᚪᚨᚬᛈᛟᛸᚧᚢᛐᚵᛵᛠᛯᛴᚹᛨᛑᚼᚺᛪᛂᚣᛘᛗᛯᛚᛜᚿᛋᛔᛢᛞᛁᛂᛳᚡᚻᛔᚾᛁᛔᛍᚾᚧᚹᛜᚳᛱᛘᛟᚥᛒᚸᛍᚾᛳᛈᛝᛗᛘᚥᛍᚿᛒᛙᚯᚱᚱᛏᚧᚵᚸᛛᛆᚬᚱᛞᚺᛄᛞᛐᚧᛑᚣᛟᛀᚱᛴᚦᛐᛴᛣᚹᛩᚭᚭᛈᚰᛍᚢᛠᛶᚫᛋᚣᛚᛲᛴᚺᚦᚿᛁᚦᚴᚻᛪᚣᛷᚮᛃᛄᚮᛢᚱᛅᛃᚥᛀᚩᚯᛢᚻᚽᛏᛘᛉᛦᛨᚭᛉᛒᛑᛶᚳᚶᛇᛡᛕᛋᛦᛡᛘᛖᛄᛞᚺᚪᛏᛑᚠᛆᛚᛰᛜᚪᛵᛮᚮᛣᛓᛏᛟᛈᛸᛇᚵᚰᛐᛗᚫᚴᛯᛗᛋᚴᚯᚼᚣᚣᛵᛯᛠᚥᚢᛝᛵᛄᛷᛄᛂᛁᛉᛚᚩᚱᛨᛷᚮᛀᚽᛸᚾᛉᛟᚩᛟᚥᛳᛉᛶᚯᚠᚱᛓᚥ".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
+    //     println!("plaintext: {:?}", plaintext.clone().iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    // }
+
+
+
+    // let mut ptwheel = Wheel::from("oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul".chars().map(|x| x as u32).collect::<Vec<u32>>());
+    // let mut ctwheel = Wheel::from("ᛒᛕᚿᛡᛳᛉᚻᛄᛞᛆᚶᚸᛦᚠᚬᚱᛎᛖᚧᚪᚨᚷᛥᛮᛟᛣᛈᛏᛑᛐᚭᚫᛤᛩᛓᛗᛴᛇᛰᚢᛋᛙᛛᛠᛯᚵᚰᚺᛚᚼᚴᛁᛵᚣᚤᛪᛂᛜᚦᛢᛔᚮᛀᛷᚡᛸᛱᚹᚩᛝᛅᛶᚽᛍᚾᛨᛲᚯᛃᚥᛘᛊᚳ".chars().map(|x| x as u32).collect::<Vec<u32>>());
     // let mut acipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    // let a = acipher.encode("hello world".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
+    // let a = acipher.encode("allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrostfromtheashesafireshallbewokenalightfromtheshadowsshallspringrenewedshallbebladethatwasbrokenthecrownlessagainshallbeking".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
     // println!("{:?}", a.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
     // let mut bcipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
-    // let b = bcipher.decode("ᚦᚡᚥᚦᚥ ᚤᚡᚥᚥᚥ".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
+    // let b = bcipher.decode("ᛖᛣᛈᛮᚴᛥᛈᛇᛎᚧᚶᛗᚪᚨᚬᛈᛟᛸᚧᚢᛐᚵᛵᛠᛯᛴᚹᛨᛑᚼᚺᛪᛂᚣᛘᛗᛯᛚᛜᚿᛋᛔᛢᛞᛁᛂᛳᚡᚻᛔᚾᛁᛔᛍᚾᚧᚹᛜᚳᛱᛘᛟᚥᛒᚸᛍᚾᛳᛈᛝᛗᛘᚥᛍᚿᛒᛙᚯᚱᚱᛏᚧᚵᚸᛛᛆᚬᚱᛞᚺᛄᛞᛐᚧᛑᚣᛟᛀᚱᛴᚦᛐᛴᛣᚹᛩᚭᚭᛈᚰᛍᚢᛠᛶᚫᛋᚣᛚᛲᛴᚺᚦᚿᛁᚦᚴᚻᛪᚣᛷᚮᛃᛄᚮᛢᚱᛅᛃᚥᛀᚩᚯᛢᚻᚽᛏᛘᛉᛦᛨᚭᛉᛒᛑᛶᚳᚶᛇᛡᛕᛋᛦᛡᛘᛖᛄᛞᚺᚪᛏᛑᚠᛆᛚᛰᛜᚪᛵᛮᚮᛣᛓᛏᛟᛈᛸᛇᚵᚰᛐᛗᚫᚴᛯᛗᛋᚴᚯᚼᚣᚣᛵᛯᛠᚥᚢᛝᛵᛄᛷᛄᛂᛁᛉᛚᚩᚱᛨᛷᚮᛀᚽᛸᚾᛉᛟᚩᛟᚥᛳᛉᛶᚯᚠᚱᛓᚥ".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
     // println!("{:?}", b.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
 
     // let mut e: Vec<u32> = "allthatisgolddoesnotglitternotallthosewhowanderarelosttheoldthatisstrongdoesnotwitherdeeprootsarenotreachedbythefrostfromtheashesafireshallbewokenalightfromtheshadowsshallspringrenewedshallbebladethatwasbrokenthecrownlessagainshallbeking".chars().into_iter().map(|x| x as u32).collect();
