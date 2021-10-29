@@ -1,64 +1,8 @@
 use crate::errors::*;
-use crate::util;
+use crate::genetics::gene::Gene;
+use crate::genetics::chisquared::*;
+
 use std::collections::HashMap;
-
-#[derive(Clone, Debug)]
-pub struct Gene {
-    pub genomes: Vec<u32>,
-    pub age: u64,
-    pub fitness: f64
-}
-
-impl Gene {
-    pub fn new() -> Self {
-        Gene {
-            genomes: Vec::new(),
-            age: 0,
-            fitness: 0.0
-        }
-    }
-
-    pub fn genome_string(&self) -> Result<String> {
-        Ok(self.genomes.clone().iter().map(|x| std::char::from_u32(*x).unwrap()).collect())
-    }
-    /// Takes a random two genomes and swaps them
-    pub fn mutate(&mut self) -> Result<()> {
-        use rand::distributions::{Distribution, Uniform};
-        let mut rng = rand::thread_rng();
-        let distro = Uniform::from(0..self.genomes.len());
-        let genomea = distro.sample(&mut rng);
-        let genomeb = distro.sample(&mut rng);
-        self.genomes.swap(genomea, genomeb);
-        Ok(())
-    }
-
-    /// Shuffles the genomes around in place
-    pub fn shuffle(&mut self) {
-        use rand::thread_rng;
-        use rand::seq::SliceRandom;
-        self.genomes.shuffle(& mut thread_rng());
-    }
-}
-
-impl From<&str> for Gene {
-    fn from(item: &str) -> Self {
-        Gene {
-            genomes: item.chars().map(|x| x as u32).collect(),
-            age: 0,
-            fitness: 0.0
-        }
-    }
-}
-
-impl From<&Vec<u32>> for Gene {
-    fn from(item: &Vec<u32>) -> Self {
-        Gene {
-            genomes: item.clone(),
-            age: 0,
-            fitness: 0.0
-        }
-    }
-}
 
 // 1. Create a population with random genes
 // 2. Figure out which n are the best
@@ -70,10 +14,74 @@ impl From<&Vec<u32>> for Gene {
 /// Takes two genes and generates a population of size
 pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
     let mut population: Vec<Gene> = vec![Gene::from(&gene.genomes); size];
+    // println!("beforeshuffle: {:?}", population);
     for mut gene in population.iter_mut() {
         gene.shuffle();
     }
+
+    // println!("aftershuffle: {:?}", population);
+
     Ok(population)
+}
+
+pub fn testPopulation(population: &mut Vec<Gene>, language: &crate::language::Language) -> Result<()> {
+    for mut gene in population {
+        testGene(&mut gene, &language);
+    }
+    Ok(())
+}
+
+/// Select parents from a population
+/// 
+/// for now, just pick the best two
+// pub fn selectParents(population: &mut Vec<Gene>) -> Result<[usize; 2]> {
+//     population.sort_by(|a, b| a.fitness.partial_cmp(&b.fitness).unwrap());
+//     Ok(&population[0..2])
+// }
+
+pub fn incrementGeneration(population: &mut Vec<Gene>, count: usize) -> Result<()> {
+    use rand::distributions::{Distribution, Uniform};
+
+    // age the genes, and if one gets too old, kill it
+    for (i, gene) in population.iter_mut().enumerate() {
+        // println!("i: {}", i);
+        gene.age += 1;
+    }
+
+    // remove the oldest two
+    population.sort_by_key(|a| a.age);
+    println!("oldest is: {}", population[population.len()-1].age);
+    population.pop();
+    population.pop();
+    population.pop();
+    population.pop();
+    population.pop();
+    population.pop();
+
+    population.sort_by(|a, b| a.fitness.partial_cmp(&b.fitness).unwrap());
+    
+    // the parents are the two best remaining
+    let parents: Vec<Gene> = population[0..2].to_vec();
+
+    // produce enough children to fill out the population
+    for i in (0..count-population.len()) {
+        println!("producing. . .");
+        if i % 2 == 0 {
+            population.push(parents[0].produceWith(&parents[1])?);
+        }
+        else {
+            population.push(parents[1].produceWith(&parents[0])?);
+        }
+    }
+    
+    Ok(())
+}
+
+pub fn mutate(gene: &mut Gene) -> Result<()> {
+    // pick a random number
+    // if it's within certain bounds
+    //   swap two genomes
+    Ok(())
 }
 
 /// Test multiple frequencies in English
@@ -108,23 +116,6 @@ pub fn testGene(gene: &mut Gene, language: &crate::language::Language) -> Result
     Ok(())
 }
 
-fn testChiSquared<T: std::cmp::Eq + std::hash::Hash + std::fmt::Debug>(o: &HashMap<T, f64>, e: &HashMap<T, f64>) -> Result<f64> {
-
-    let mut chisquare: Vec<f64> = Vec::new();
-
-    for (eke, eva) in e {
-        if let Some(ova) = o.get(eke) {
-            // println!("{:?},{:?} | {:?},{:?}", eke, eva, eke, ova);
-            chisquare.push((ova - eva).powi(2) / eva);
-        }
-        else {
-            error_chain::bail!("Chisquared: Observed hashmap missing value from Expected");
-        }
-    }
-    Ok(chisquare.iter().sum())
-}
-
-// aaaaaaaa
 pub fn testMultigram(message: &Vec<u32>, mut compdata: HashMap<Vec<u32>, f64>, size: usize) -> Result<f64> {
     let mut mesdata: HashMap<Vec<u32>, f64> = HashMap::new();
     let mlen = message.len()-size-1;
@@ -161,11 +152,4 @@ pub fn testMonograms(message: &Vec<u32>, mut compdata: HashMap<u32, f64>) -> Res
         mesdata.entry(letter.clone()).or_insert(0.0);
     }
     Ok(testChiSquared(&mesdata, &compdata)?)
-}
-
-pub fn testPopulation(population: &mut Vec<Gene>, language: &crate::language::Language) -> Result<()> {
-    for mut gene in population {
-        testGene(&mut gene, &language);
-    }
-    Ok(())
 }
