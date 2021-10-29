@@ -48,33 +48,49 @@ impl Gene {
         crosspoints.sort();
 
         // OPTIMIZABLE: count letter occurances in genome. Could be optimized probably by doing this once much earlier on.
-        let mut copymap: HashMap<u32, usize> = HashMap::new();
-        for letter in &self.genomes {
-            let count = copymap.entry(*letter).or_insert(0);
-            *count += 1;
-        }
+        // in this version, lack of duplicates, and the order matters most
+        // let mut copymap: HashMap<u32, usize> = HashMap::new();
+        // for letter in &self.genomes {
+        //     let count = copymap.entry(*letter).or_insert(0);
+        //     *count += 1;
+        // }
         
-        // copy the middle chunk to the child
+        // // copy the middle chunk to the child
+        // let mut child = Gene::new();
+        // child.genomes = vec![0u32; self.genomes.len()];
+        // for i in (crosspoints[0]..crosspoints[1]) {
+        //     child.genomes[i] = self.genomes[i];
+        // }
+        
+
+        // let mut i = crosspoints[1];
+        // for genome in &other.genomes {
+        //     if let Some(count) = copymap.get_mut(genome) {
+        //         if *count > 0 {
+        //             child.genomes[i % self.genomes.len()] = *genome;
+        //             i += 1;
+        //             *count -= 1;
+        //         }
+        //     }
+        // }
+
+        // in this version, position matters most, duplicates are fine
         let mut child = Gene::new();
         child.genomes = vec![0u32; self.genomes.len()];
+        for i in (0..crosspoints[0]) {
+            child.genomes[i] = self.genomes[i];
+        }
+
         for i in (crosspoints[0]..crosspoints[1]) {
+            child.genomes[i] = other.genomes[i];
+        }
+
+        for i in (crosspoints[1]..self.genomes.len()) {
             child.genomes[i] = self.genomes[i];
         }
         
-
-        let mut i = crosspoints[1];
-        for genome in &other.genomes {
-            if let Some(count) = copymap.get_mut(genome) {
-                if *count > 0 {
-                    child.genomes[i % self.genomes.len()] = *genome;
-                    i += 1;
-                    *count -= 1;
-                }
-            }
-        }
-        
         let mutdistro = Uniform::from(0..100);
-        if mutdistro.sample(&mut rng) < 20 {
+        if mutdistro.sample(&mut rng) <= 10 {
             child.mutate();
         }
 

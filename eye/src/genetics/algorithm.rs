@@ -14,13 +14,9 @@ use std::collections::HashMap;
 /// Takes two genes and generates a population of size
 pub fn createPopulation(size: usize, gene: &Gene) -> Result<Vec<Gene>> {
     let mut population: Vec<Gene> = vec![Gene::from(&gene.genomes); size];
-    // println!("beforeshuffle: {:?}", population);
     for mut gene in population.iter_mut() {
         gene.shuffle();
     }
-
-    // println!("aftershuffle: {:?}", population);
-
     Ok(population)
 }
 
@@ -31,56 +27,65 @@ pub fn testPopulation(population: &mut Vec<Gene>, language: &crate::language::La
     Ok(())
 }
 
-/// Select parents from a population
-/// 
-/// for now, just pick the best two
-// pub fn selectParents(population: &mut Vec<Gene>) -> Result<[usize; 2]> {
-//     population.sort_by(|a, b| a.fitness.partial_cmp(&b.fitness).unwrap());
-//     Ok(&population[0..2])
-// }
-
 pub fn incrementGeneration(population: &mut Vec<Gene>, count: usize) -> Result<()> {
     use rand::distributions::{Distribution, Uniform};
 
     // age the genes, and if one gets too old, kill it
-    for (i, gene) in population.iter_mut().enumerate() {
+    for gene in population.iter_mut() {
         // println!("i: {}", i);
         gene.age += 1;
     }
 
-    // remove the oldest two
-    population.sort_by_key(|a| a.age);
-    println!("oldest is: {}", population[population.len()-1].age);
-    population.pop();
-    population.pop();
-    population.pop();
-    population.pop();
-    population.pop();
-    population.pop();
+    // remove those who are too old
+    // let t = population.clone();
+    population.retain(|gene| gene.age < 20 );
 
+    // remove the oldest two
+    // population.sort_by_key(|a| a.age);
+    // println!("oldest is: {}", population[population.len()-1].age);
     population.sort_by(|a, b| a.fitness.partial_cmp(&b.fitness).unwrap());
+    // keep the top 20%
+    let mut newpop = population[0..(population.len() / 5)].to_vec();
+
+    // population.sort_by(|a, b| a.fitness.partial_cmp(&b.fitness).unwrap());
     
     // the parents are the two best remaining
-    let parents: Vec<Gene> = population[0..2].to_vec();
+    let parents: Vec<Gene> = newpop[0..2].to_vec();
+    println!("parents fitness: {}, {}", parents[0].fitness, parents[1].fitness);
 
     // produce enough children to fill out the population
-    for i in (0..count-population.len()) {
-        println!("producing. . .");
+    for i in (0..count-newpop.len()) {
+        // println!("producing. . .");
         if i % 2 == 0 {
-            population.push(parents[0].produceWith(&parents[1])?);
+            newpop.push(parents[0].produceWith(&parents[1])?);
         }
         else {
-            population.push(parents[1].produceWith(&parents[0])?);
+            newpop.push(parents[1].produceWith(&parents[0])?);
         }
     }
+
+    *population = newpop;
     
     Ok(())
 }
 
-pub fn mutate(gene: &mut Gene) -> Result<()> {
-    // pick a random number
-    // if it's within certain bounds
-    //   swap two genomes
+pub fn run<T>(origin: Gene,
+    popsize: usize,
+    test: fn(&mut Vec<Gene>, &T) -> Result<()>,
+    against: &T,
+    fitnesscondition: fn(f64) -> bool) -> Result<()> {
+
+    let mut pop = createPopulation(popsize, &origin)?;
+    let mut i = 0;
+    while true {
+        println!("generation: {}", i);
+        incrementGeneration(&mut pop, popsize);
+        test(&mut pop, &against);
+        i += 1;
+        if fitnesscondition(pop[0].fitness) {
+            break;
+        }
+    }
     Ok(())
 }
 
@@ -101,18 +106,24 @@ pub fn mutate(gene: &mut Gene) -> Result<()> {
 /// The idea here is that if knowing one wheel turns this problem into
 /// a substitution cipher, then even with some of the letters wrong, we
 /// may be able to see actual english come out of it
+/// 
+/// 
+/// The reason that glyphs end up in the plaintext is because doubles
+/// some glyphs from actually translating
 pub fn testGene(gene: &mut Gene, language: &crate::language::Language) -> Result<()> {
-    let monochi = testMonograms(&gene.genomes, language.monograms()?)?;
-    let dichi = testMultigram(&gene.genomes, language.digrams()?, 2)?;
-    let trichi = testMultigram(&gene.genomes, language.trigrams()?, 3)?;
-    let quadrichi = testMultigram(&gene.genomes, language.quadrigrams()?, 4)?;
-    let doublechi = testMultigram(&gene.genomes, language.doubles()?, 2)?;
-    // println!("Gene: {:?}", &gene.genomes);
-    // println!("m: {}, d: {}, t: {}, q: {}, dd: {}", monochi, dichi, trichi, quadrichi, doublechi);
-    // println!();
+    pub use crate::cipher::{Alberti, Substitution, Wheel, Cipher};
+    let mut ptwheel = Wheel::from("oyqpucbdsgmevgfbjauwtdpalbtmxkizezlsiffzxrrvakhwnoqvhaxnicnyobyqjmpewsdhctdrcgkejul".chars().map(|x| x as u32).collect::<Vec<u32>>());
+    let mut ctwheel = Wheel::from(gene.genomes.clone());
+    // println!("ctwheel: {:?}", ctwheel.iter().map(|x| std::char::from_u32(*x).unwrap()).collect::<String>());
+    let mut cipher = Alberti::new(ptwheel.clone(), ctwheel.clone());
+    let plaintext = cipher.decode("ᛖᛣᛈᛮᚴᛥᛈᛇᛎᚧᚶᛗᚪᚨᚬᛈᛟᛸᚧᚢᛐᚵᛵᛠᛯᛴᚹᛨᛑᚼᚺᛪᛂᚣᛘᛗᛯᛚᛜᚿᛋᛔᛢᛞᛁᛂᛳᚡᚻᛔᚾᛁᛔᛍᚾᚧᚹᛜᚳᛱᛘᛟᚥᛒᚸᛍᚾᛳᛈᛝᛗᛘᚥᛍᚿᛒᛙᚯᚱᚱᛏᚧᚵᚸᛛᛆᚬᚱᛞᚺᛄᛞᛐᚧᛑᚣᛟᛀᚱᛴᚦᛐᛴᛣᚹᛩᚭᚭᛈᚰᛍᚢᛠᛶᚫᛋᚣᛚᛲᛴᚺᚦᚿᛁᚦᚴᚻᛪᚣᛷᚮᛃᛄᚮᛢᚱᛅᛃᚥᛀᚩᚯᛢᚻᚽᛏᛘᛉᛦᛨᚭᛉᛒᛑᛶᚳᚶᛇᛡᛕᛋᛦᛡᛘᛖᛄᛞᚺᚪᛏᛑᚠᛆᛚᛰᛜᚪᛵᛮᚮᛣᛓᛏᛟᛈᛸᛇᚵᚰᛐᛗᚫᚴᛯᛗᛋᚴᚯᚼᚣᚣᛵᛯᛠᚥᚢᛝᛵᛄᛷᛄᛂᛁᛉᛚᚩᚱᛨᛷᚮᛀᚽᛸᚾᛉᛟᚩᛟᚥᛳᛉᛶᚯᚠᚱᛓᚥ".chars().map(|x| x as u32).collect::<Vec<u32>>())?;
+    
+    let monochi = testMonograms(&plaintext, language.monograms()?)?;
+    let dichi = testMultigram(&plaintext, language.digrams()?, 2)?;
+    let trichi = testMultigram(&plaintext, language.trigrams()?, 3)?;
+    let quadrichi = testMultigram(&plaintext, language.quadrigrams()?, 4)?;
+    let doublechi = testMultigram(&plaintext, language.doubles()?, 2)?;
     gene.fitness = monochi + dichi + trichi + quadrichi + doublechi;
-    // gene.fitness = 8f64 * monochi + 4f64*dichi + 2f64*trichi + quadrichi;
-    // gene.fitness = monochi + 2f64 * dichi + 4f64 * trichi + 8f64 * quadrichi;
     Ok(())
 }
 
