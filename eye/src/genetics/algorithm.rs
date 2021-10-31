@@ -27,6 +27,11 @@ pub fn testPopulation(population: &mut Vec<Gene>, language: &crate::language::La
     Ok(())
 }
 
+pub fn selectParents(population: &Vec<Gene>) -> Result<Vec<Gene>> {
+
+    Ok(vec![])
+}
+
 pub fn incrementGeneration(population: &mut Vec<Gene>, count: usize) -> Result<()> {
     use rand::distributions::{Distribution, Uniform};
 
