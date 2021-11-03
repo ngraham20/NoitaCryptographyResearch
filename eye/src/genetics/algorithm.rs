@@ -27,6 +27,11 @@ pub fn testPopulation(population: &mut Vec<Gene>, language: &crate::language::La
     Ok(())
 }
 
+pub fn selectParents(population: &Vec<Gene>) -> Result<Vec<Gene>> {
+
+    Ok(vec![])
+}
+
 pub fn incrementGeneration(population: &mut Vec<Gene>, count: usize) -> Result<()> {
     use rand::distributions::{Distribution, Uniform};
 
@@ -69,6 +74,7 @@ pub fn incrementGeneration(population: &mut Vec<Gene>, count: usize) -> Result<(
     Ok(())
 }
 
+// TODO: change the test from the whole population to just one gene, the looping can just happen in here
 pub fn run<T>(origin: Gene,
     popsize: usize,
     test: fn(&mut Vec<Gene>, &T) -> Result<()>,
